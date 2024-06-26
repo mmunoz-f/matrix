@@ -1,10 +1,62 @@
-template<type T>
+#include <vector>
+
+
+namespace matrix {
+
+template<typename T>
 class Vector
 {
-    Vector(const Vector& other);
+    typename std::vector<T> vector_data;
 
-    Vector &operator=(const Vector& other);
+    vector_data data;
 
 public:
-    size_t size();
+    Vector() :
+        data()
+    {
+
+    }
+
+    Vector(const Vector& other) :
+        data(other.data)
+    {
+
+    }
+
+    Vector(const Vector&& other) :
+        data(other.data)
+    {
+        other.data = vector_data(); // TODO is this the best solution? data should be a pointer maybe
+    }
+
+    template<class itetator>
+    Vector(const itetator& begin, const itetator& end) :
+        data(begin, end)
+    {
+
+    }
+
+    ~Vector()
+    {
+
+    }
+
+    Vector &operator=(const Vector& other)
+    {
+        if (this != &other)
+        {
+            data = other.data;
+        }
+
+        return *this;
+    }
+
+    // TODO Move operator 
+
+    size_t size()
+    {
+        return data.size();
+    }
 };
+
+}
