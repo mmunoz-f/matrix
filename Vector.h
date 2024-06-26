@@ -1,4 +1,4 @@
-template<type T, size N>
+template<type T>
 class Vector
 {
     Vector(const Vector& other);
@@ -6,5 +6,5 @@ class Vector
     Vector &operator=(const Vector& other);
 
 public:
-    size_t size() { return N }
+    size_t size();
 };
