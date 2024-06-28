@@ -38,7 +38,7 @@ public:
     Matrix(const matrix_data& input_data) :
         data(input_data)
     {
-
+        // TODO: fill shape
     }
 
     Matrix(const Vector<T>& vector) :
