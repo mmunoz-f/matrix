@@ -1,7 +1,10 @@
+#include <utility>
 #include <vector>
 
-
 namespace matrix {
+
+template<typename T>
+class Matrix;
 
 template<typename T>
 class Vector
@@ -23,17 +26,34 @@ public:
 
     }
 
-    Vector(const Vector&& other) :
-        data(other.data)
+    Vector(const vector_data& input_data) :
+        data(input_data)
     {
-        other.data = vector_data(); // TODO is this the best solution? data should be a pointer maybe
+
+    }
+
+    Vector(const Matrix<T>& matrix) :
+        data()
+    {
+        data.reserve(matrix.total_elements());
+
+        for (auto column : matrix.data)
+            for (T value : column)
+            {
+                data.push_back(value);
+            }
+    }
+
+    Vector(Vector&& other) :
+        data(std::move(other.data))
+    {
+
     }
 
     template<class itetator>
-    Vector(const itetator& begin, const itetator& end) :
-        data(begin, end)
+    Vector(const itetator& begin, const itetator& end)
     {
-
+        data = vector_data(begin, end)
     }
 
     ~Vector()
@@ -51,12 +71,34 @@ public:
         return *this;
     }
 
-    // TODO Move operator 
-
-    size_t size()
+    Vector &operator=(Vector&& other)
     {
-        return data.size();
+        if (this != &other)
+        {
+            data = std::move(other.data);
+        }
+
+        return *this;
     }
+
+    Vector &operator=(const Matrix<T>& matrix)
+    {
+        data.clear();
+        data.reserve(matrix.total_elements());
+
+        for (auto column : matrix.data)
+            for (T value : column)
+            {
+                data.push_back(value);
+            }
+    }
+
+    size_t size() const
+    {
+        return data->size();
+    }
+
+    friend Matrix<T>;
 };
 
 }

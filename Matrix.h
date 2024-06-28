@@ -1,39 +1,62 @@
+#include <utility>
 #include <vector>
+#include <algorithm>
+#include <numeric>
 
 namespace matrix {
+
+template<typename T>
+class Vector;
 
 template<typename T>
 class Matrix
 {
     typename std::vector<T> column;
+    typename std::vector<column> matrix_data;
+    
     typename std::vector<size_t> shape_t;
 
-    std::vector<column> data;
+    matrix_data data;
     shape_t shape;
 
 public:
 
     Matrix() :
-        data(), // TODO are all vector empty initialized
+        data(),
         shape()
     {
 
     }
         
     Matrix(const Matrix& other) :
-        data(data.other),
-        shape(data.shape)
+        data(other.data),
+        shape(other.shape)
     {
 
     }
 
-    // TODO Move contrusctor
+    Matrix(const matrix_data& input_data) :
+        data(input_data)
+    {
 
-    // TODO Matrix(range)
+    }
+
+    Matrix(const Vector<T>& vector) :
+        data({{ vector.data }}), shape({ 1, vector.size() })
+    {
+
+    }
+
+    Matrix(Matrix&& other) :
+        data(std::move(other.data)),
+        shape(std::move(other.shape))
+    {
+
+    }
 
     ~Matrix()
     {
-        // TODO careful! move semantif
+
     }
 
     Matrix &operator=(const Matrix& other)
@@ -47,13 +70,42 @@ public:
         return *this;
     }
 
-    // TODO Move operator
+    Matrix &operator=(Matrix&& other)
+    {
+        if (this != &other)
+        {
+            data = std::move(other.data);
+            shape = std::move(other.shape);
+        }
 
-public:
-    const shape_t &shape()
+        return *this;
+    }
+
+    Matrix &operator=(const Vector<T>& vector)
+    {
+        data = {{ vector.data }};
+        shape = { 1 , vector.size() };
+
+        return *this;
+    }
+
+    const shape_t &shape() const
     {
         return shape;
     }
+
+    bool is_square() const
+    {
+        return std::all_of(shape.begin(), shape.end(), shape[0]);
+    }
+
+    size_t total_elements() const
+    {
+        return std::accumulate(shape.begin(), shape.end(), 1,
+            [](size_t acc, size_t i) { return acc * i })
+    }
+
+    friend Vector<T>;
 };
 
 }
