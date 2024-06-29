@@ -36,9 +36,11 @@ public:
     }
 
     Matrix(const matrix_data& input_data) :
-        data(input_data)
+        data(input_data), shape()
     {
-        // TODO: fill shape
+        shape.first = data.size();
+        if (shape.first > 0)
+            shape.second = data[0].size(); 
     }
 
     Matrix(const Vector<T>& vector) :
@@ -112,6 +114,7 @@ template<typename T>
 std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 {
     os << "{ ";
+
     for (auto col : matrix.data)
     {
         os << "( ";
@@ -123,6 +126,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 
         os << ")";
     }
+    
     os << " }";
     return os;
 }
