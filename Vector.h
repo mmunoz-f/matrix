@@ -1,5 +1,6 @@
 #include <utility>
 #include <vector>
+#include <ostream>
 
 namespace matrix {
 
@@ -99,6 +100,21 @@ public:
     }
 
     friend Matrix<T>;
+    friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vector);
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
+{
+    os << "( ";
+    
+    for (T value : vector.data)
+    {
+        os << value << " ";
+    }
+
+    os << ")";
+    return os;
+}
 
 }

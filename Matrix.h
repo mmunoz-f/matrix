@@ -1,7 +1,7 @@
 #include <utility>
+#include <ostream>
 #include <vector>
 #include <algorithm>
-#include <numeric>
 
 namespace matrix {
 
@@ -14,7 +14,7 @@ class Matrix
     typename std::vector<T> column;
     typename std::vector<column> matrix_data;
     
-    typename std::vector<size_t> shape_t;
+    typename std::pair<size_t, size_t> shape_t;
 
     matrix_data data;
     shape_t shape;
@@ -101,11 +101,30 @@ public:
 
     size_t total_elements() const
     {
-        return std::accumulate(shape.begin(), shape.end(), 1,
-            [](size_t acc, size_t i) { return acc * i })
+        return shape.first * shape.second;
     }
 
     friend Vector<T>;
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix);
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
+{
+    os << "{ ";
+    for (auto col : matrix.data)
+    {
+        os << "( ";
+
+        for (T value : col)
+        {
+            os << value << " ";
+        }
+
+        os << ")";
+    }
+    os << " }";
+    return os;
+}
 
 }
