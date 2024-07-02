@@ -1,6 +1,6 @@
 #include <utility>
-#include <ostream>
 #include <vector>
+#include <ostream>
 
 namespace matrix {
 
@@ -37,7 +37,7 @@ public:
     Matrix(const matrix_data& input_data) :
         _data(input_data), _shape()
     {
-        _shape.first = _data.size();
+        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
         if (_shape.first > 0)
             _shape.second = _data[0].size(); 
     }
@@ -52,15 +52,23 @@ public:
         _data(std::move(other._data)),
         _shape(std::move(other._shape))
     {
+        
+    }
 
+    Matrix(matrix_data&& data) :
+        _data(std::move(data))
+    {
+        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
+        if (_shape.first > 0)
+            _shape.second = _data[0].size();
     }
 
     ~Matrix()
     {
-
+        
     }
 
-    Matrix &operator=(const Matrix& other)
+    Matrix& operator=(const Matrix& other)
     {
         if (this != &other)
         {
@@ -71,7 +79,26 @@ public:
         return *this;
     }
 
-    Matrix &operator=(Matrix&& other)
+    Matrix& operator=(const matrix_data& data)
+    {
+        _data = data;
+
+        _shape.first = _data.size();
+        if (_shape.first > 0)
+            _shape.second = _data[0].size();
+
+        return *this;
+    }
+
+    Matrix& operator=(const Vector<T>& vector)
+    {
+        _data = {{ vector._data }};
+        _shape = { 1 , vector.size() };
+
+        return *this;
+    }
+
+    Matrix& operator=(Matrix&& other)
     {
         if (this != &other)
         {
@@ -82,12 +109,12 @@ public:
         return *this;
     }
 
-    Matrix &operator=(const Vector<T>& vector)
+    Matrix& operator=(matrix_data&& data)
     {
-        _data = {{ vector._data }};
-        _shape = { 1 , vector.size() };
-
-        return *this;
+        _data = std::move(data);
+        _shape.first = _data.size();
+        if (_shape.first > 0)
+            _shape.second = _data[0].size();
     }
 
     const shape_t &shape() const
@@ -108,7 +135,7 @@ public:
     friend Vector<T>;
 
     template<typename t>
-    friend std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix);
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<t>& matrix);
 };
 
 template<typename T>
@@ -125,10 +152,12 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
             os << value << " ";
         }
 
-        os << ")";
+        os << ") ";
     }
     
-    os << " }";
+    os << "}";
+
+    os << " (" << matrix._shape.first << "x" << matrix._shape.second << ")";
     return os;
 }
 

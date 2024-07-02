@@ -14,7 +14,7 @@ $(NAME): $(OBJS)
 
 .PHONY: clean
 clean:
-	rm 
+	rm $(OBJS)
 .PHONY: fclean
 fclean: clean
 	rm $(NAME)
