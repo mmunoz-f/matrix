@@ -1,7 +1,6 @@
 #include <utility>
 #include <ostream>
 #include <vector>
-#include <algorithm>
 
 namespace matrix {
 
@@ -11,47 +10,47 @@ class Vector;
 template<typename T>
 class Matrix
 {
-    typename std::vector<T> column;
-    typename std::vector<column> matrix_data;
+    typedef std::vector<T> column;
+    typedef std::vector<column> matrix_data;
     
-    typename std::pair<size_t, size_t> shape_t;
+    typedef std::pair<size_t, size_t> shape_t;
 
-    matrix_data data;
-    shape_t shape;
+    matrix_data _data;
+    shape_t _shape;
 
 public:
 
     Matrix() :
-        data(),
-        shape()
+        _data(),
+        _shape()
     {
 
     }
         
     Matrix(const Matrix& other) :
-        data(other.data),
-        shape(other.shape)
+        _data(other._data),
+        _shape(other._shape)
     {
 
     }
 
     Matrix(const matrix_data& input_data) :
-        data(input_data), shape()
+        _data(input_data), _shape()
     {
-        shape.first = data.size();
-        if (shape.first > 0)
-            shape.second = data[0].size(); 
+        _shape.first = _data.size();
+        if (_shape.first > 0)
+            _shape.second = _data[0].size(); 
     }
 
     Matrix(const Vector<T>& vector) :
-        data({{ vector.data }}), shape({ 1, vector.size() })
+        _data({{ vector._data }}), _shape({ 1, vector.size() })
     {
 
     }
 
     Matrix(Matrix&& other) :
-        data(std::move(other.data)),
-        shape(std::move(other.shape))
+        _data(std::move(other._data)),
+        _shape(std::move(other._shape))
     {
 
     }
@@ -65,8 +64,8 @@ public:
     {
         if (this != &other)
         {
-            data = other.data;
-            shape = other.shape;
+            _data = other._data;
+            _shape = other._shape;
         }
 
         return *this;
@@ -76,8 +75,8 @@ public:
     {
         if (this != &other)
         {
-            data = std::move(other.data);
-            shape = std::move(other.shape);
+            _data = std::move(other._data);
+            _shape = std::move(other._shape);
         }
 
         return *this;
@@ -85,28 +84,30 @@ public:
 
     Matrix &operator=(const Vector<T>& vector)
     {
-        data = {{ vector.data }};
-        shape = { 1 , vector.size() };
+        _data = {{ vector._data }};
+        _shape = { 1 , vector.size() };
 
         return *this;
     }
 
     const shape_t &shape() const
     {
-        return shape;
+        return _shape;
     }
 
     bool is_square() const
     {
-        return std::all_of(shape.begin(), shape.end(), shape[0]);
+        return _shape.first == _shape.second;
     }
 
     size_t total_elements() const
     {
-        return shape.first * shape.second;
+        return _shape.first * _shape.second;
     }
 
     friend Vector<T>;
+
+    template<typename t>
     friend std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix);
 };
 
@@ -115,7 +116,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 {
     os << "{ ";
 
-    for (auto col : matrix.data)
+    for (auto col : matrix._data)
     {
         os << "( ";
 

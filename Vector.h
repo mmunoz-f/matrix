@@ -10,43 +10,43 @@ class Matrix;
 template<typename T>
 class Vector
 {
-    typename std::vector<T> vector_data;
+    typedef std::vector<T> vector_data;
 
-    vector_data data;
+    vector_data _data;
 
 public:
     Vector() :
-        data()
+        _data()
     {
 
     }
 
     Vector(const Vector& other) :
-        data(other.data)
+        _data(other._data)
     {
 
     }
 
     Vector(const vector_data& input_data) :
-        data(input_data)
+        _data(input_data)
     {
 
     }
 
     Vector(const Matrix<T>& matrix) :
-        data()
+        _data()
     {
-        data.reserve(matrix.total_elements());
+        _data.reserve(matrix.total_elements());
 
         for (auto column : matrix.data)
             for (T value : column)
             {
-                data.push_back(value);
+                _data.push_back(value);
             }
     }
 
     Vector(Vector&& other) :
-        data(std::move(other.data))
+        _data(std::move(other._data))
     {
 
     }
@@ -54,7 +54,7 @@ public:
     template<class itetator>
     Vector(const itetator& begin, const itetator& end)
     {
-        data = vector_data(begin, end)
+        _data = vector_data(begin, end);
     }
 
     ~Vector()
@@ -66,7 +66,7 @@ public:
     {
         if (this != &other)
         {
-            data = other.data;
+            _data = other._data;
         }
 
         return *this;
@@ -76,7 +76,7 @@ public:
     {
         if (this != &other)
         {
-            data = std::move(other.data);
+            _data = std::move(other._data);
         }
 
         return *this;
@@ -84,23 +84,25 @@ public:
 
     Vector &operator=(const Matrix<T>& matrix)
     {
-        data.clear();
-        data.reserve(matrix.total_elements());
+        _data.clear();
+        _data.reserve(matrix.total_elements());
 
         for (auto column : matrix.data)
             for (T value : column)
             {
-                data.push_back(value);
+                _data.push_back(value);
             }
     }
 
     size_t size() const
     {
-        return data->size();
+        return _data->size();
     }
 
     friend Matrix<T>;
-    friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vector);
+
+    template<typename t>
+    friend std::ostream& operator<<(std::ostream& os, const Vector<t>& vector);
 };
 
 template<typename T>
@@ -108,7 +110,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
 {
     os << "( ";
     
-    for (T value : vector.data)
+    for (T value : vector._data)
     {
         os << value << " ";
     }
