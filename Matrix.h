@@ -20,6 +20,10 @@ class Matrix
 
 public:
 
+/***
+ * Constructors
+ */
+
     Matrix() :
         _data(),
         _shape()
@@ -68,6 +72,10 @@ public:
         
     }
 
+/***
+ * Assign operations
+ */
+
     Matrix& operator=(const Matrix& other)
     {
         if (this != &other)
@@ -98,6 +106,10 @@ public:
         return *this;
     }
 
+/***
+ * Move operations
+ */
+
     Matrix& operator=(Matrix&& other)
     {
         if (this != &other)
@@ -117,19 +129,59 @@ public:
             _shape.second = _data[0].size();
     }
 
-    const shape_t &shape() const
+/***
+ * Access methods
+ */
+
+    inline const T& get(size_t i, size_t j) const
+    {
+        return _data[i][j];
+    }
+
+    inline T& get(size_t i, size_t j)
+    {
+        return _data[i][j];
+    }
+
+    inline const shape_t &shape() const
     {
         return _shape;
     }
 
-    bool is_square() const
+    inline bool is_square() const
     {
         return _shape.first == _shape.second;
     }
 
-    size_t total_elements() const
+    inline size_t total_elements() const
     {
         return _shape.first * _shape.second;
+    }
+
+/***
+ * Arithmetic operations
+ */
+
+/***
+ * Equality operations
+ */
+
+    bool operator==(const Matrix& other) const
+    {
+        if (_shape != other._shape)
+            return false;
+
+        for (size_t i = 0; i < _shape.first; i++)
+            for (size_t j = 0; j < _shape.second; j++)
+                if (_data[i][j] != other.get(i, j))
+                    return false;
+
+        return true;
+    }
+
+    inline bool operator!=(const Matrix& other) const
+    {
+        return !(*this == other);
     }
 
     friend Vector<T>;

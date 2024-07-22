@@ -12,6 +12,9 @@ class Vector
 {
     typedef std::vector<T> vector_data;
 
+    typedef typename vector_data::iterator iterator;
+    typedef typename vector_data::const_iterator const_iterator;
+
     vector_data _data;
 
 public:
@@ -56,8 +59,8 @@ public:
             }
     }
 
-    template<class itetator>
-    Vector(const itetator& begin, const itetator& end)
+    template<class _itetator>
+    Vector(const _itetator& begin, const _itetator& end)
     {
         _data = vector_data(begin, end);
     }
@@ -133,6 +136,10 @@ public:
         return *this;
     }
 
+/***
+ * Access methods
+ */
+
     inline const T& operator[](size_t pos) const
     {
         return _data[pos];
@@ -141,6 +148,31 @@ public:
     inline T&  operator[](size_t pos)
     {
         return _data[pos];
+    }
+
+    inline size_t size() const
+    {
+        return _data.size();
+    }
+
+    inline const_iterator begin() const
+    {
+        return _data.begin();
+    }
+
+    inline iterator begin()
+    {
+        return _data.begin();
+    }
+
+    inline const_iterator end() const
+    {
+        return _data.end();
+    }
+
+    inline iterator end()
+    {
+        return _data.end();
     }
 
 /***
@@ -226,21 +258,16 @@ public:
         
         for (size_t i = 0; i < size(); i++)
         {
-            if (_data[i] != other._data[i])
+            if (_data[i] != other[i])
                 return false;
         }
 
         return true;
     }
 
-    bool operator!=(const Vector& other) const
+    inline bool operator!=(const Vector& other) const
     {
         return !(*this == other);
-    }
-
-    inline size_t size() const
-    {
-        return _data.size();
     }
 
     friend Matrix<T>;
