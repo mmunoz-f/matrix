@@ -1,6 +1,5 @@
 #include <utility>
 #include <vector>
-#include <algorithm>
 #include <ostream>
 
 namespace matrix {
@@ -16,8 +15,19 @@ class Vector
     vector_data _data;
 
 public:
+
+/***
+ * Constructors
+ */
+
     Vector() :
         _data()
+    {
+
+    }
+
+    Vector(size_t size) :
+        _data(size)
     {
 
     }
@@ -69,6 +79,10 @@ public:
 
     }
 
+/***
+ * Assign operations
+ */
+
     Vector& operator=(const Vector& other)
     {
         if (this != &other)
@@ -98,6 +112,10 @@ public:
             }
     }
 
+/***
+ * Move operations
+ */
+
     Vector& operator=(Vector&& other)
     {
         if (this != &other)
@@ -115,39 +133,114 @@ public:
         return *this;
     }
 
+    inline const T& operator[](size_t pos) const
+    {
+        return _data[pos];
+    }
+
+    inline T&  operator[](size_t pos)
+    {
+        return _data[pos];
+    }
+
+/***
+ * Arithmetics operations
+ */
+
     Vector operator+(const Vector& other) const
     {
-        Vector<T> vector = std::transform(_data.begin(), _data.end(),
-                                          other._data.begin(), other._data.end(),
-                                          std::plus<T>());
+        Vector vector(size());
+        
+        for (size_t i = 0; i < size(); i++) // TODO: change to only make size one time or use literal when optimized
+        {
+            vector[i] = _data[i] + other[i];
+        }
+
         return vector;
     }
 
     Vector& operator+=(const Vector& other)
     {
-        _data = std::transform(_data.begin(), _data.end(),
-                               other._data.begin(), other._data.end(),
-                               std::plus<T>());
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] += other[i];
+        }
+
+        return *this;
     }
 
     Vector operator-(const Vector& other) const
     {
-        Vector<T> vector = std::transform(_data.begin(), _data.end(),
-                                          other._data.begin(), other._data.end(),
-                                          std::minus<T>());
+        Vector vector(size());
+        
+        for (size_t i = 0; i < size(); i++)
+        {
+            vector[i] = _data[i] - other[i];
+        }
+
         return vector;
     }
 
     Vector& operator-=(const Vector& other)
     {
-        _data = std::transform(_data.begin(), _data.end(),
-                               other._data.begin(), other._data.end(),
-                               std::minus<T>());
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] -= other[i];
+        }
+
+        return *this;
     }
 
-    size_t size() const
+    Vector operator*(const T& scalar) const
     {
-        return _data->size();
+        Vector vector(size());
+
+        for (size_t i = 0; i < size(); i++)
+        {
+            vector[i] = _data[i] * scalar;
+        }
+
+        return vector;
+    }
+
+    Vector& operator*=(const T& scalar)
+    {
+        Vector vector(size());
+
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] *= scalar;
+        }
+
+        return *this;
+    }
+
+/***
+ * Equality operators
+ */
+
+    bool operator==(const Vector& other) const
+    {
+        if (size() != other.size())
+            return false;
+        
+        for (size_t i = 0; i < size(); i++)
+        {
+            if (_data[i] != other._data[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    bool operator!=(const Vector& other) const
+    {
+        return !(*this == other);
+    }
+
+    inline size_t size() const
+    {
+        return _data.size();
     }
 
     friend Matrix<T>;
@@ -168,6 +261,12 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
 
     os << ")";
     return os;
+}
+
+template<typename T>
+Vector<T> operator*(const int scalar, const Vector<T>& vector)
+{
+    return vector * scalar;
 }
 
 }
