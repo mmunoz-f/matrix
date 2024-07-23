@@ -30,7 +30,14 @@ public:
     {
 
     }
-        
+    
+    Matrix(const shape_t& shape) :
+        _data(shape.first, column(shape.second)),
+        _shape(shape)
+    {
+
+    }
+
     Matrix(const Matrix& other) :
         _data(other._data),
         _shape(other._shape)
@@ -162,6 +169,78 @@ public:
  * Arithmetic operations
  */
 
+    Matrix operator+(const Matrix& other) const
+    {
+        Matrix matrix(shape());
+
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                matrix.get(i, j) = _data[i][j] + other.get(i, j);
+            }
+
+        return matrix;
+    }
+
+    Matrix& operator+=(const Matrix& other)
+    {
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                _data[i][j] += other.get(i, j);
+            }
+
+        return *this;
+    }
+
+    Matrix operator-(const Matrix& other) const
+    {
+        Matrix matrix(shape());
+
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                matrix.get(i, j) = _data[i][j] - other.get(i, j);
+            }
+
+        return matrix;
+    }
+
+    Matrix& operator-=(const Matrix& other)
+    {
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                _data[i][j] -= other.get(i, j);
+            }
+
+        return *this;
+    }
+
+    Matrix operator*(const T& scalar) const
+    {
+        Matrix matrix(shape());
+
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                matrix.get(i, j) = _data[i][j] * scalar;
+            }
+
+        return matrix;
+    }
+
+    Matrix& operator*=(const T& scalar)
+    {
+        for (size_t i = 0; i < shape().first; i++)
+            for (size_t j = 0; j < shape().second; j++)
+            {
+                _data[i][j] *= scalar;
+            }
+
+        return *this;
+    }
+
 /***
  * Equality operations
  */
@@ -211,6 +290,12 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 
     os << " (" << matrix._shape.first << "x" << matrix._shape.second << ")";
     return os;
+}
+
+template<typename T>
+Matrix<T> operator*(const T scalar, const Matrix<T>& matrix)
+{
+    return matrix * scalar;
 }
 
 }

@@ -1,7 +1,7 @@
 NAME	= ex00.out
 
 CXX			= g++
-CXXFLAGS	= -Wall -Werror -Wextra -pthread -I../googletest/googletest/include
+CXXFLAGS	= -Wall -Werror -Wextra -g -pthread -I../googletest/googletest/include
 
 SRCS	= main.cpp
 OBJS	= $(SRCS:.cpp=.o)

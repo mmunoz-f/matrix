@@ -291,7 +291,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
 }
 
 template<typename T>
-Vector<T> operator*(const int scalar, const Vector<T>& vector)
+Vector<T> operator*(const T& scalar, const Vector<T>& vector)
 {
     return vector * scalar;
 }
