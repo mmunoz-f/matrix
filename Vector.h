@@ -1,6 +1,7 @@
 #include <utility>
 #include <vector>
 #include <ostream>
+#include <cmath>
 
 namespace matrix {
 
@@ -245,6 +246,18 @@ public:
         }
 
         return *this;
+    }
+
+    T dot_product(const Vector& other) const
+    {
+        T result = T();
+
+        for (size_t i = 0; i < size(); i++)
+        {
+            result = std::fma(_data[i], other[i], result);
+        }
+
+        return result;
     }
 
 /***
