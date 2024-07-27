@@ -10,8 +10,8 @@ class Vector;
 template<typename T>
 class Matrix
 {
-    typedef std::vector<T> column;
-    typedef std::vector<column> matrix_data;
+    typedef matrix::Vector<T> column;
+    typedef matrix::Vector<column> matrix_data;
     
     typedef std::pair<size_t, size_t> shape_t;
 
@@ -46,15 +46,26 @@ public:
     }
 
     Matrix(const matrix_data& input_data) :
-        _data(input_data), _shape()
+        _data(input_data),
+        _shape()
     {
         _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
         if (_shape.first > 0)
             _shape.second = _data[0].size(); 
     }
 
+    Matrix(const std::initializer_list<T>& init) :
+        _data(init),
+        _shape()
+    {
+        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
+        if (_shape.first > 0)
+            _shape.second = _data[0].size();
+    }
+
     Matrix(const Vector<T>& vector) :
-        _data({{ vector._data }}), _shape({ 1, vector.size() })
+        _data({{ vector._data }}),
+        _shape({ 1, vector.size() })
     {
 
     }
@@ -67,7 +78,8 @@ public:
     }
 
     Matrix(matrix_data&& data) :
-        _data(std::move(data))
+        _data(std::move(data)),
+        _shape()
     {
         _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
         if (_shape.first > 0)
@@ -97,6 +109,17 @@ public:
     Matrix& operator=(const matrix_data& data)
     {
         _data = data;
+
+        _shape.first = _data.size();
+        if (_shape.first > 0)
+            _shape.second = _data[0].size();
+
+        return *this;
+    }
+
+    Matrix& operator=(const std::initializer_list<T>& init)
+    {
+        _data = init;
 
         _shape.first = _data.size();
         if (_shape.first > 0)
@@ -140,14 +163,24 @@ public:
  * Access methods
  */
 
-    inline const T& get(size_t i, size_t j) const
+    inline const T& operator()(size_t i, size_t j) const
     {
         return _data[i][j];
     }
 
-    inline T& get(size_t i, size_t j)
+    inline T& operator()(size_t i, size_t j)
     {
         return _data[i][j];
+    }
+
+    inline const Vector<T>& operator[](size_t pos) const
+    {
+        return _data[pos];
+    }
+
+    inline Vector<T> operator[](size_t pos)
+    {
+        return _data[pos];
     }
 
     inline const shape_t &shape() const
@@ -176,7 +209,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix.get(i, j) = _data[i][j] + other.get(i, j);
+                matrix(i, j) = _data[i][j] + other(i, j);
             }
 
         return matrix;
@@ -187,7 +220,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                _data[i][j] += other.get(i, j);
+                _data[i][j] += other(i, j);
             }
 
         return *this;
@@ -200,7 +233,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix.get(i, j) = _data[i][j] - other.get(i, j);
+                matrix(i, j) = _data[i][j] - other(i, j);
             }
 
         return matrix;
@@ -211,7 +244,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                _data[i][j] -= other.get(i, j);
+                _data[i][j] -= other(i, j);
             }
 
         return *this;
@@ -224,7 +257,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix.get(i, j) = _data[i][j] * scalar;
+                matrix(i, j) = _data[i][j] * scalar;
             }
 
         return matrix;
@@ -252,7 +285,7 @@ public:
 
         for (size_t i = 0; i < _shape.first; i++)
             for (size_t j = 0; j < _shape.second; j++)
-                if (_data[i][j] != other.get(i, j))
+                if (_data[i][j] != other(i, j))
                     return false;
 
         return true;

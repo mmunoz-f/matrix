@@ -48,12 +48,18 @@ public:
 
     }
 
+    Vector(const std::initializer_list<T>& init) :
+        _data(init)
+    {
+
+    }
+
     Vector(const Matrix<T>& matrix) :
         _data()
     {
         _data.reserve(matrix.total_elements());
 
-        for (auto column : matrix.data)
+        for (auto column : matrix._data)
             for (T value : column)
             {
                 _data.push_back(value);
@@ -104,12 +110,19 @@ public:
         return *this;
     }
 
+    Vector& operator=(const std::initializer_list<T>& init)
+    {
+        _data = init;
+
+        return *this;
+    }
+
     Vector& operator=(const Matrix<T>& matrix)
     {
         _data.clear();
         _data.reserve(matrix.total_elements());
 
-        for (auto column : matrix.data)
+        for (auto column : matrix._data)
             for (T value : column)
             {
                 _data.push_back(value);
@@ -307,6 +320,27 @@ template<typename T>
 Vector<T> operator*(const T& scalar, const Vector<T>& vector)
 {
     return vector * scalar;
+}
+
+template<typename T, class container1, class container2>
+Vector<T> linear_combination(const container1& vectors, const container2& coefs)
+{
+    size_t dim = coefs.size();
+    Vector<T> result(dim);
+    
+    for (size_t i = 0; i < dim; i++)
+    {
+        T acc = T();
+
+        for (size_t j = 0; j < dim; j++)
+        {
+            acc = std::fma(vectors[j][i], coefs[j], acc);
+        }
+
+        result[i] = acc;
+    }
+
+    return result;
 }
 
 }

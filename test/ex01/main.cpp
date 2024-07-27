@@ -6,6 +6,15 @@
 
 #define TYPE int 
 
+TEST(LinearCombination, Simple)
+{
+    std::vector<matrix::Vector<TYPE> > vectors = { {1, 2}, {3, 5} };
+    std::vector<TYPE> coefs({2, 4});
+
+    matrix::Vector<TYPE> vector = matrix::linear_combination<TYPE>(vectors, coefs);
+
+    EXPECT_EQ(vector, matrix::Vector<TYPE>({14, 24}));
+}
 
 /***************************** */
 
