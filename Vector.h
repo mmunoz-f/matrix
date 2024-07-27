@@ -30,8 +30,8 @@ public:
 
     }
 
-    Vector(size_t size) :
-        _data(size)
+    explicit Vector(size_t size, const T& value = T()) :
+        _data(size, value)
     {
 
     }

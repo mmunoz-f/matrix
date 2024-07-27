@@ -30,9 +30,9 @@ public:
     {
 
     }
-    
-    Matrix(const shape_t& shape) :
-        _data(shape.first, column(shape.second)),
+
+    Matrix(const shape_t& shape, const T& value = T()) :
+        _data(shape.first, column(shape.second, value)),
         _shape(shape)
     {
 
