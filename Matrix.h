@@ -54,7 +54,7 @@ public:
             _shape.second = _data[0].size(); 
     }
 
-    Matrix(const std::initializer_list<T>& init) :
+    Matrix(const std::initializer_list<column>& init) :
         _data(init),
         _shape()
     {

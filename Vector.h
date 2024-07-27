@@ -328,7 +328,7 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     size_t dim = coefs.size();
     Vector<T> result(dim);
     
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < dim; i++) // TODO: is this O(n)?
     {
         T acc = T();
 
@@ -341,6 +341,12 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     }
 
     return result;
+}
+
+template<typename vector>
+inline Vector<float> lerp(const vector& u, const vector& v, const float scalar)
+{
+    return linear_combination<float>(Matrix({u, v}), Vector({1.f - scalar, scalar}));
 }
 
 }
