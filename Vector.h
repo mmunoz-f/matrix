@@ -326,7 +326,7 @@ template<typename T, class container1, class container2>
 Vector<T> linear_combination(const container1& vectors, const container2& coefs)
 {
     size_t n_coefs = coefs.size();
-    size_t dim = container2[0].size();
+    size_t dim = vectors[0].size();
     Vector<T> result(dim);
     
     for (size_t i = 0; i < n_coefs; i++) // TODO: is this O(n)?
