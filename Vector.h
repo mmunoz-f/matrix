@@ -326,14 +326,20 @@ template<typename T, class container1, class container2>
 Vector<T> linear_combination(const container1& vectors, const container2& coefs)
 {
     size_t n_coefs = coefs.size();
+
+    if (n_coefs != vectors.size()) // TODO in comp time?
+        throw std::runtime_error(
+            "linear combination: number of coeficients and number of vectors do not match"
+        );
+
     size_t dim = vectors[0].size();
     Vector<T> result(dim);
     
-    for (size_t i = 0; i < n_coefs; i++) // TODO: is this O(n)?
+    for (size_t i = 0; i < dim; i++)
     {
         T acc = T();
 
-        for (size_t j = 0; j < dim; j++)
+        for (size_t j = 0; j < n_coefs; j++)
         {
             acc = std::fma(vectors[j][i], coefs[j], acc);
         }
