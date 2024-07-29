@@ -325,10 +325,11 @@ Vector<T> operator*(const T& scalar, const Vector<T>& vector)
 template<typename T, class container1, class container2>
 Vector<T> linear_combination(const container1& vectors, const container2& coefs)
 {
-    size_t dim = coefs.size();
+    size_t n_coefs = coefs.size();
+    size_t dim = container2[0].size();
     Vector<T> result(dim);
     
-    for (size_t i = 0; i < dim; i++) // TODO: is this O(n)?
+    for (size_t i = 0; i < n_coefs; i++) // TODO: is this O(n)?
     {
         T acc = T();
 
@@ -343,8 +344,8 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     return result;
 }
 
-template<typename vector>
-inline Vector<float> lerp(const vector& u, const vector& v, const float scalar)
+template<typename object>
+inline Vector<float> lerp(const object& u, const object& v, const float scalar)
 {
     return linear_combination<float>(Matrix({u, v}), Vector({1.f - scalar, scalar}));
 }
