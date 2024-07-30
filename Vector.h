@@ -1,7 +1,11 @@
+#pragma once
+
 #include <utility>
 #include <vector>
 #include <ostream>
 #include <cmath>
+
+#include "utils.h"
 
 namespace matrix {
 
@@ -263,7 +267,7 @@ public:
         return *this;
     }
 
-    T dot_product(const Vector& other) const
+    T dot(const Vector& other) const
     {
         T result = T();
 
@@ -273,6 +277,42 @@ public:
         }
 
         return result;
+    }
+
+    T norm_1() const
+    {
+        T result = T();
+
+        for (T val : _data)
+        {   
+            result += val;
+        }
+
+        return result;
+    }
+
+    float norm() const
+    {
+        float result = 0.f;
+
+        for (size_t i = 0; i < size(); i++)
+        {
+            result = std::fma(_data[i], _data[i], result);
+        }
+
+        return std::pow(result, 0.5f);
+    }
+
+    T norm_inf() const
+    {
+        T max = abs(_data[0]);
+
+        for (size_t i = 1; i < size(); i++)
+        {
+            max = std::max(max, abs(_data[i]));
+        }
+
+        return max;
     }
 
 /***
@@ -350,6 +390,12 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     }
 
     return result;
+}
+
+template<typename T>
+inline Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const float scalar)
+{
+    return linear_combination<float>(Vector<Vector<T> >({u, v}), Vector<float>({1 - scalar, scalar}));
 }
 
 }

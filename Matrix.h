@@ -1,3 +1,5 @@
+#pragma once
+
 #include <utility>
 #include <vector>
 #include <ostream>
@@ -329,6 +331,20 @@ template<typename T>
 Matrix<T> operator*(const T scalar, const Matrix<T>& matrix)
 {
     return matrix * scalar;
+}
+
+template<typename T>
+inline Matrix<T> lerp(const Matrix<T>& a, const Matrix<T>& b, const float scalar)
+{
+    Matrix<T> result(a.shape());
+    const Vector<float> coefs({1 - scalar, scalar});
+
+    for (size_t i = 0; i < result.shape().first; i++)
+    {
+        result[i] = linear_combination<float>(Vector<Vector<T> >({a[i], b[i]}), coefs);
+    }
+
+    return result;
 }
 
 }
