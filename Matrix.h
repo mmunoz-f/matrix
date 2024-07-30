@@ -178,7 +178,7 @@ public:
         return _data[pos];
     }
 
-    inline Vector<T> operator[](size_t pos)
+    inline Vector<T>& operator[](size_t pos)
     {
         return _data[pos];
     }

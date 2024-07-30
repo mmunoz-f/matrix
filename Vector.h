@@ -11,6 +11,8 @@ class Matrix;
 template<typename T>
 class Vector
 {
+    typedef T value_type;
+
     typedef std::vector<T> vector_data;
 
     typedef typename vector_data::iterator iterator;
@@ -323,16 +325,16 @@ Vector<T> operator*(const T& scalar, const Vector<T>& vector)
 }
 
 template<typename T, class container1, class container2>
-Vector<T> linear_combination(const container1& vectors, const container2& coefs)
+Vector<T> linear_combination(const container1& vectors, const container2& coefs) // TODO: check T and (container1&container2)::value_type, is the same in comp time
 {
-    size_t n_coefs = coefs.size();
+    const size_t n_coefs = coefs.size();
 
     if (n_coefs != vectors.size()) // TODO in comp time?
         throw std::runtime_error(
             "linear combination: number of coeficients and number of vectors do not match"
         );
 
-    size_t dim = vectors[0].size();
+    const size_t dim = vectors[0].size();
     Vector<T> result(dim);
     
     for (size_t i = 0; i < dim; i++)
@@ -348,12 +350,6 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     }
 
     return result;
-}
-
-template<typename object>
-inline Vector<float> lerp(const object& u, const object& v, const float scalar)
-{
-    return linear_combination<float>(Matrix({u, v}), Vector({1.f - scalar, scalar}));
 }
 
 }
