@@ -398,4 +398,10 @@ inline Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const float scalar
     return linear_combination<float>(Vector<Vector<T> >({u, v}), Vector<float>({1 - scalar, scalar}));
 }
 
+template<typename T>
+inline T   angle_cos(const Vector<T>& u, const Vector<T>& v)
+{
+    return u.dot(v) / (u.norm() * v.norm());
+}
+
 }
