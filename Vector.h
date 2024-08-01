@@ -379,14 +379,10 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     
     for (size_t i = 0; i < dim; i++)
     {
-        T acc = T();
-
         for (size_t j = 0; j < n_coefs; j++)
         {
-            acc = std::fma(vectors[j][i], coefs[j], acc);
+            result[i] = std::fma(vectors[j][i], coefs[j], result[i]);
         }
-
-        result[i] = acc;
     }
 
     return result;
@@ -402,6 +398,26 @@ template<typename T>
 inline T   angle_cos(const Vector<T>& u, const Vector<T>& v)
 {
     return u.dot(v) / (u.norm() * v.norm());
+}
+
+template<typename T>
+Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) // TODO: Check size to be only 3 in comp time
+{
+    if (u.size() != 3 || v.size() != 3)
+        throw std::runtime_error(
+            "cross product: dims of vectors must be 3"
+        );
+
+    Vector<T> result({
+        -(v[1] * u[2]),
+        -(u[0] * v[2]),
+        -(u[1] * v[0])
+    });
+    result[0] = std::fma(u[1], v[2], result[0]);
+    result[1] = std::fma(u[2], v[0], result[1]);
+    result[2] = std::fma(u[0], v[1], result[2]);
+
+    return result;
 }
 
 }
