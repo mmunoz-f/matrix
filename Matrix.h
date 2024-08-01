@@ -12,8 +12,8 @@ class Vector;
 template<typename T>
 class Matrix
 {
-    typedef matrix::Vector<T> column;
-    typedef matrix::Vector<column> matrix_data;
+    typedef matrix::Vector<T> row;
+    typedef matrix::Vector<row> matrix_data;
     
     typedef std::pair<size_t, size_t> shape_t;
 
@@ -34,7 +34,7 @@ public:
     }
 
     Matrix(const shape_t& shape, const T& value = T()) :
-        _data(shape.first, column(shape.second, value)),
+        _data(shape.first, row(shape.second, value)),
         _shape(shape)
     {
 
@@ -56,7 +56,7 @@ public:
             _shape.second = _data[0].size(); 
     }
 
-    Matrix(const std::initializer_list<column>& init) :
+    Matrix(const std::initializer_list<row>& init) :
         _data(init),
         _shape()
     {
@@ -185,6 +185,18 @@ public:
         return _data[pos];
     }
 
+    const Vector<T>& col(size_t pos) const // TODO: Improve matrix data access, make data secuencial access adding dims
+    {
+        Vector<T> col(_shape.second);
+
+        for (size_t i = 0; i < _shape.second)
+        {
+            col[i] = _data[i][pos];
+        }
+
+        return col;
+    }
+
     inline const shape_t &shape() const
     {
         return _shape;
@@ -276,6 +288,42 @@ public:
         return *this;
     }
 
+    Vector<T> operator*(const Vector<T>& u) const
+    {
+        const size_t dim = u.size();
+        if (_shape.second != dim) // TODO: check in comp time
+            throw std::runtime_error(
+                "matrix*vector multiplication: invalid multiplication, check dims of both object"
+            );
+
+        Vector<T> result(_shape.first);
+
+        for (size_t i = 0; i < _shape.first; i++)
+        {
+            result[i] = u.dot(_data[i]);
+        }
+
+        return result;
+    }
+
+    Matrix operator*(const Matrix& other) const
+    {
+        if (_shape.second != other.shape().first) // TODO: check in comp time
+            throw std::runtime_error(
+                "matrix*matrix multiplication: invalid multiplication, check dims of both object"
+            );
+
+        Matrix<T> result((_shape.first, other.shape().second));
+
+        for (size_t i = 0; i < _shape.first; i++)
+            for (size_t j = 0; j < other.shape().second; j++)
+            {
+                result(i, j) = _data[i].dot(other.col(j));
+            }
+
+        return result;
+    }
+
 /***
  * Equality operations
  */
@@ -309,11 +357,11 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 {
     os << "{ ";
 
-    for (auto col : matrix._data)
+    for (auto row : matrix._data)
     {
         os << "( ";
 
-        for (T value : col)
+        for (T value : row)
         {
             os << value << " ";
         }

@@ -65,8 +65,8 @@ public:
     {
         _data.reserve(matrix.total_elements());
 
-        for (auto column : matrix._data)
-            for (T value : column)
+        for (auto row : matrix._data)
+            for (T value : row)
             {
                 _data.push_back(value);
             }
@@ -128,8 +128,8 @@ public:
         _data.clear();
         _data.reserve(matrix.total_elements());
 
-        for (auto column : matrix._data)
-            for (T value : column)
+        for (auto row : matrix._data)
+            for (T value : row)
             {
                 _data.push_back(value);
             }
