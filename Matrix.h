@@ -23,7 +23,7 @@ class Matrix
 public:
 
 /***
- * Constructors
+ * Constructors TODO: Check all rows has the same amount of elements
  */
 
     Matrix() :
@@ -210,6 +210,23 @@ public:
     inline size_t total_elements() const
     {
         return _shape.first * _shape.second;
+    }
+
+    T trace() const
+    {
+        if (!is_square())
+            throw std::runtime_error(
+                "trace: matrix is not square"
+            );
+
+        T result = T();
+
+        for (size_t i = 0; i < _shape.first; i++)
+        {
+            result += _data[i][i];
+        }
+
+        return result;
     }
 
 /***
