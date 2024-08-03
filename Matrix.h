@@ -185,11 +185,11 @@ public:
         return _data[pos];
     }
 
-    const Vector<T>& col(size_t pos) const // TODO: Improve matrix data access, make data secuencial access adding dims
+    const Vector<T> col(size_t pos) const // TODO: Improve matrix data access, make data secuencial access adding dims
     {
-        Vector<T> col(_shape.second);
+        Vector<T> col(_shape.first);
 
-        for (size_t i = 0; i < _shape.second)
+        for (size_t i = 0; i < _shape.first; i++)
         {
             col[i] = _data[i][pos];
         }
@@ -313,7 +313,7 @@ public:
                 "matrix*matrix multiplication: invalid multiplication, check dims of both object"
             );
 
-        Matrix<T> result((_shape.first, other.shape().second));
+        Matrix<T> result(shape_t(_shape.first, other.shape().second));
 
         for (size_t i = 0; i < _shape.first; i++)
             for (size_t j = 0; j < other.shape().second; j++)

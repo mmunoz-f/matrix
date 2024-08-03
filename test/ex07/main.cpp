@@ -53,7 +53,57 @@ TEST(VectorLinearMap, Simple)
  * Matrix
  */
 
+TEST(MatrixLinearMap, Identity0)
+{
+    matrix::Matrix<TYPE> matrix1({{1, 0}, {0, 1}});
+    matrix::Matrix<TYPE> matrix2({{1, 0}, {0, 1}});
 
+    matrix::Matrix<TYPE> result = matrix1 * matrix2;
+
+    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 0}, {0, 1}}));
+    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{1, 0}, {0, 1}}));
+
+    EXPECT_EQ(result, matrix::Matrix<TYPE>({{1, 0}, {0, 1}}));
+}
+
+TEST(MatrixLinearMap, Identity)
+{
+    matrix::Matrix<TYPE> matrix1({{1, 0}, {0, 1}});
+    matrix::Matrix<TYPE> matrix2({{2, 1}, {4, 2}});
+
+    matrix::Matrix<TYPE> result = matrix1 * matrix2;
+
+    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 0}, {0, 1}}));
+    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{2, 1}, {4, 2}}));
+
+    EXPECT_EQ(result, matrix::Matrix<TYPE>({{2, 1}, {4, 2}}));
+}
+
+TEST(MatrixLinearMap, MakeItDouble)
+{
+    matrix::Matrix<TYPE> matrix1({{2, 0}, {0, 2}});
+    matrix::Matrix<TYPE> matrix2({{2, 1}, {4, 2}});
+
+    matrix::Matrix<TYPE> result = matrix1 * matrix2;
+
+    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{2, 0}, {0, 2}}));
+    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{2, 1}, {4, 2}}));
+
+    EXPECT_EQ(result, matrix::Matrix<TYPE>({{4, 2}, {8, 4}}));
+}
+
+TEST(MatrixLinearMap, DiffDim)
+{
+    matrix::Matrix<TYPE> matrix1({{1, 2, 3}, {1, 2, 3}});
+    matrix::Matrix<TYPE> matrix2({{1, 2}, {1, 2}, {1, 2}});
+
+    matrix::Matrix<TYPE> result = matrix1 * matrix2;
+
+    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 2, 3}, {1, 2, 3}}));
+    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{1, 2}, {1, 2}, {1, 2}}));
+
+    EXPECT_EQ(result, matrix::Matrix<TYPE>({{6, 12}, {6, 12}}));
+}
 
 /***************************** */
 
