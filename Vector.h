@@ -201,9 +201,10 @@ public:
 
     Vector operator+(const Vector& other) const
     {
-        Vector vector(size());
+        size_t dim = size();
+        Vector vector(dim);
         
-        for (size_t i = 0; i < size(); i++) // TODO: change to only make size one time or use literal when optimized
+        for (size_t i = 0; i < dim; i++) // TODO: change to only make size one time or use literal when optimized
         {
             vector[i] = _data[i] + other[i];
         }
@@ -213,7 +214,9 @@ public:
 
     Vector& operator+=(const Vector& other)
     {
-        for (size_t i = 0; i < size(); i++)
+        size_t dim = size();
+
+        for (size_t i = 0; i < dim; i++)
         {
             _data[i] += other[i];
         }
@@ -223,9 +226,10 @@ public:
 
     Vector operator-(const Vector& other) const
     {
-        Vector vector(size());
+        size_t dim = size();
+        Vector vector(dim);
         
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             vector[i] = _data[i] - other[i];
         }
@@ -235,7 +239,9 @@ public:
 
     Vector& operator-=(const Vector& other)
     {
-        for (size_t i = 0; i < size(); i++)
+        size_t dim = size();
+
+        for (size_t i = 0; i < dim; i++)
         {
             _data[i] -= other[i];
         }
@@ -245,9 +251,10 @@ public:
 
     Vector operator*(const T& scalar) const
     {
-        Vector vector(size());
+        size_t dim = size();
+        Vector vector(dim);
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             vector[i] = _data[i] * scalar;
         }
@@ -257,9 +264,10 @@ public:
 
     Vector& operator*=(const T& scalar)
     {
-        Vector vector(size());
+        size_t dim = size();
+        Vector vector(dim);
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             _data[i] *= scalar;
         }
@@ -269,9 +277,10 @@ public:
 
     T dot(const Vector& other) const
     {
+        size_t dim = size();
         T result = T();
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             result = std::fma(_data[i], other[i], result);
         }
@@ -293,9 +302,10 @@ public:
 
     float norm() const
     {
+        size_t dim = size();
         float result = 0.f;
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             result = std::fma(_data[i], _data[i], result);
         }
@@ -305,9 +315,10 @@ public:
 
     T norm_inf() const
     {
+        size_t dim = size();
         T max = abs(_data[0]);
 
-        for (size_t i = 1; i < size(); i++)
+        for (size_t i = 1; i < dim; i++)
         {
             max = std::max(max, abs(_data[i]));
         }
@@ -321,10 +332,11 @@ public:
 
     bool operator==(const Vector& other) const
     {
-        if (size() != other.size())
+        size_t dim = size();
+        if (dim != other.size())
             return false;
         
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < dim; i++)
         {
             if (_data[i] != other[i])
                 return false;
