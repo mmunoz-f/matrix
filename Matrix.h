@@ -22,7 +22,7 @@ class Matrix
 public:
 
 /***
- * Constructors TODO: Check all rows has the same amount of elements
+ * Constructors
  */
 
     Matrix() :
@@ -58,7 +58,14 @@ public:
 
         _data.reserve(_shape.first * _shape.second);
         for (auto row : init)
+        {
+            if (row.size() != _shape.second)
+                throw std::runtime_error(
+                    "Matrix initializer list constructor: not all nodes had the same size"
+                );
+
             _data.insert(_data.end(), row);
+        }
     }
 
     Matrix(const Vector<T>& vector) :
@@ -106,8 +113,15 @@ public:
         _data.clear();
         _data.reserve(_shape.first * _shape.second);
         for (auto row : init)
+        {
+            if (row.size() != _shape.second)
+                throw std::runtime_error(
+                    "Matrix initializer list constructor: not all nodes had the same size"
+                );
+
             _data.insert(_data.end(), row);
-        
+        }
+
         return *this;
     }
 
@@ -170,6 +184,32 @@ public:
         }
 
         return col;
+    }
+
+    void change_row(size_t row_index, const Vector<T>& row)
+    {
+        if (row.size() != _shape.second)
+            throw std::runtime_error(
+                "Matrix change_row: new row had not correct size"
+            );
+
+        for (size_t i = 0; i < _shape.second; i++)
+        {
+            (*this)(row_index, i) = row[i];
+        }
+    }
+
+    void change_col(size_t col_index, const Vector<T>& col)
+    {
+        if (col.size() != _shape.first)
+            throw std::runtime_error(
+                "Matrix change_col: new col had not correct size"
+            );
+
+        for (size_t i = 0; i < _shape.first; i++)
+        {
+            (*this)(i, col_index) = col[i];
+        }
     }
 
     inline const shape_t &shape() const
@@ -381,7 +421,7 @@ inline Matrix<T> lerp(const Matrix<T>& a, const Matrix<T>& b, const float scalar
 
     for (size_t i = 0; i < result.shape().first; i++)
     {
-        result[i] = linear_combination<float>(Vector<Vector<T> >({a[i], b[i]}), coefs);
+        result.change_row(i, linear_combination<float>(Vector<Vector<T> >{a[i], b[i]}, coefs));
     }
 
     return result;

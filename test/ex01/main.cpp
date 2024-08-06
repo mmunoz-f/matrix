@@ -5,24 +5,25 @@
 #include "../../matrix.h"
 
 #define TYPE int 
+#define VECTOR matrix::Vector<TYPE>
 
 TEST(LinearCombination, Simple)
 {
-    std::vector<matrix::Vector<TYPE> > vectors = { {1, 2, 4}, {3, 5, 7} };
-    std::vector<TYPE> coefs({2, 4});
+    std::vector<VECTOR> vectors{ {1, 2, 4}, {3, 5, 7} };
+    std::vector<TYPE> coefs{2, 4};
 
-    matrix::Vector<TYPE> vector = matrix::linear_combination<TYPE>(vectors, coefs);
+    VECTOR vector = matrix::linear_combination<TYPE>(vectors, coefs);
 
-    EXPECT_EQ(vector, matrix::Vector<TYPE>({14, 24, 36}));
+    EXPECT_EQ(vector, VECTOR({14, 24, 36}));
 }
 
 TEST(LinearCombination, BadNCoefs)
 {
-    std::vector<matrix::Vector<TYPE> > vectors = { {1, 2, 4}, {3, 5, 7} };
-    std::vector<TYPE> coefs({2, 4, 6});
+    std::vector<VECTOR> vectors{ {1, 2, 4}, {3, 5, 7} };
+    std::vector<TYPE> coefs{2, 4, 6};
 
     EXPECT_THROW({
-        matrix::Vector<TYPE> vector = matrix::linear_combination<TYPE>(vectors, coefs);
+        VECTOR vector = matrix::linear_combination<TYPE>(vectors, coefs);
     }, std::runtime_error);
 }
 
