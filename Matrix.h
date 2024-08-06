@@ -162,7 +162,7 @@ public:
         return _data[i * _shape.second + j];
     }
 
-    const Vector<T> operator[](size_t pos) const
+    const Vector<T> row(size_t pos) const
     {
         Vector<T> row(_shape.second);
 
@@ -236,7 +236,7 @@ public:
 
         T result = T();
 
-        for (size_t i = 0; i < _shape.first; i++)
+        for (size_t i = 0; i < _shape.first; i++) // TODO optimize loops itter adding _shape.second to i
         {
             result += (*this)(i, i);
         }
@@ -323,7 +323,7 @@ public:
     Vector<T> operator*(const Vector<T>& u) const
     {
         const size_t dim = u.size();
-        if (_shape.second != dim) // TODO: check in comp time
+        if (_shape.second != dim)
             throw std::runtime_error(
                 "matrix*vector multiplication: invalid multiplication, check dims of both object"
             );
@@ -332,7 +332,7 @@ public:
 
         for (size_t i = 0; i < _shape.first; i++)
         {
-            result[i] = u.dot(_data[i]);
+            result[i] = u.dot(row(i));
         }
 
         return result;
@@ -340,7 +340,7 @@ public:
 
     Matrix operator*(const Matrix& other) const
     {
-        if (_shape.second != other.shape().first) // TODO: check in comp time
+        if (_shape.second != other.shape().first)
             throw std::runtime_error(
                 "matrix*matrix multiplication: invalid multiplication, check dims of both object"
             );
@@ -350,7 +350,7 @@ public:
         for (size_t i = 0; i < _shape.first; i++)
             for (size_t j = 0; j < other.shape().second; j++)
             {
-                result(i, j) = _data[i].dot(other.col(j));
+                result(i, j) = row(i).dot(other.col(j));
             }
 
         return result;

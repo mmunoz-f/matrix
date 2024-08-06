@@ -6,15 +6,17 @@
 
 #define TYPE int 
 
+#define VECTOR matrix::Vector<TYPE>
+
 TEST(DotProduct, Simple)
 {
-    matrix::Vector<TYPE> vector1({1, 2, 3});
-    matrix::Vector<TYPE> vector2({2, -3, 6});
+    VECTOR vector1{1, 2, 3};
+    VECTOR vector2{2, -3, 6};
 
     TYPE result = vector1.dot(vector2);
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({1, 2, 3}));
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({2, -3, 6}));
+    EXPECT_EQ(vector1, VECTOR({1, 2, 3}));
+    EXPECT_EQ(vector2, VECTOR({2, -3, 6}));
 
     EXPECT_EQ(result, 14);
 }

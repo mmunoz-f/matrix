@@ -4,39 +4,41 @@
 
 #include "../../matrix.h"
 
-#define TYPE int 
+#define TYPE int
+
+#define MATRIX matrix::Matrix<TYPE>
 
 TEST(MatrixTrace, Identity)
 {
-    matrix::Matrix<TYPE> matrix({{1, 0}, {0, 1}});
+    MATRIX matrix{{1, 0}, {0, 1}};
 
     TYPE result = matrix.trace();
 
-    EXPECT_EQ(matrix, matrix::Matrix<TYPE>({{1, 0}, {0, 1}}));
+    EXPECT_EQ(matrix, MATRIX({{1, 0}, {0, 1}}));
 
     EXPECT_EQ(result, 2);
 }
 
 TEST(MatrixTrace, Simple)
 {
-    matrix::Matrix<TYPE> matrix({{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}});
+    MATRIX matrix{{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}};
 
     TYPE result = matrix.trace();
 
-    EXPECT_EQ(matrix, matrix::Matrix<TYPE>({{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}}));
+    EXPECT_EQ(matrix, MATRIX({{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}}));
 
     EXPECT_EQ(result, 9);
 }
 
 TEST(MatrixTrace, NotSquare)
 {
-    matrix::Matrix<TYPE> matrix({{1, 0, 1}, {0, 1, 1}});
+    MATRIX matrix{{1, 0, 1}, {0, 1, 1}};
 
     EXPECT_THROW({
         matrix.trace();
     }, std::runtime_error);
 
-    EXPECT_EQ(matrix, matrix::Matrix<TYPE>({{1, 0, 1}, {0, 1, 1}}));
+    EXPECT_EQ(matrix, MATRIX({{1, 0, 1}, {0, 1, 1}}));
 }
 
 /***************************** */

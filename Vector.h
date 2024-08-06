@@ -15,8 +15,6 @@ class Matrix;
 template<typename T>
 class Vector
 {
-    typedef T value_type;
-
     typedef std::vector<T> vector_data;
 
     typedef typename vector_data::iterator iterator;
