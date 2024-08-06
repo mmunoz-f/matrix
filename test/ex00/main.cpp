@@ -6,6 +6,10 @@
 
 #define TYPE int 
 
+#define VECTOR matrix::Vector<TYPE>
+#define MATRIX matrix::Matrix<TYPE>
+
+
 /***
  * Vectors
  */
@@ -14,103 +18,103 @@
 
 TEST(VectorEquality, Simple)
 {
-    matrix::Vector<TYPE> vector1({1, 2, 3});
-    matrix::Vector<TYPE> vector2({1, 2, 3});
+    VECTOR vector1{1, 2, 3};
+    VECTOR vector2{1, 2, 3};
 
     ASSERT_EQ(true, vector1 == vector2);
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({1, 2, 3}));
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({1, 2, 3}));
+    EXPECT_EQ(vector1, VECTOR({1, 2, 3}));
+    EXPECT_EQ(vector2, VECTOR({1, 2, 3}));
 }
 
 /** Addition */
 
 TEST(VectorAddition, Simple) {
-    matrix::Vector<TYPE> vector1({1, 2, 3});
-    matrix::Vector<TYPE> vector2({0, 5, 3});
+    VECTOR vector1{1, 2, 3};
+    VECTOR vector2{0, 5, 3};
 
-    matrix::Vector<TYPE> vector3 = vector1 + vector2;
+    VECTOR vector3 = vector1 + vector2;
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({1, 2, 3}));
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({0, 5, 3}));
+    EXPECT_EQ(vector1, VECTOR({1, 2, 3}));
+    EXPECT_EQ(vector2, VECTOR({0, 5, 3}));
 
-    EXPECT_EQ(vector3, matrix::Vector<TYPE>({1, 7, 6}));
+    EXPECT_EQ(vector3, VECTOR({1, 7, 6}));
 }
 
 TEST(VectorAddition, AssignSimple)
 {
-    matrix::Vector<TYPE> vector1({6, 2, 3});
-    matrix::Vector<TYPE> vector2({8, 1, 3});
+    VECTOR vector1{6, 2, 3};
+    VECTOR vector2{8, 1, 3};
 
     vector1 += vector2;
 
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({8, 1, 3}));
+    EXPECT_EQ(vector2, VECTOR({8, 1, 3}));
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({14, 3, 6}));
+    EXPECT_EQ(vector1, VECTOR({14, 3, 6}));
 }
 
 /** Substraction */
 
 TEST(VectorSubstraction, Simple) {
-    matrix::Vector<TYPE> vector1({1, 2, 3});
-    matrix::Vector<TYPE> vector2({0, 5, 3});
+    VECTOR vector1{1, 2, 3};
+    VECTOR vector2{0, 5, 3};
 
-    matrix::Vector<TYPE> vector3 = vector1 - vector2;
+    VECTOR vector3 = vector1 - vector2;
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({1, 2, 3}));
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({0, 5, 3}));
+    EXPECT_EQ(vector1, VECTOR({1, 2, 3}));
+    EXPECT_EQ(vector2, VECTOR({0, 5, 3}));
 
-    EXPECT_EQ(vector3, matrix::Vector<TYPE>({1, -3, 0}));
+    EXPECT_EQ(vector3, VECTOR({1, -3, 0}));
 }
 
 TEST(VectorSubstraction, AssignSimple)
 {
-    matrix::Vector<TYPE> vector1({6, 2, 3});
-    matrix::Vector<TYPE> vector2({8, 1, 3});
+    VECTOR vector1{6, 2, 3};
+    VECTOR vector2{8, 1, 3};
 
     vector1 -= vector2;
 
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({8, 1, 3}));
+    EXPECT_EQ(vector2, VECTOR({8, 1, 3}));
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({-2, 1, 0}));
+    EXPECT_EQ(vector1, VECTOR({-2, 1, 0}));
 }
 
 /** Scalar Multiplication */
 
 TEST(VectorScalarMultiplication, Simple)
 {
-    matrix::Vector<TYPE> vector1({1, 2, 3});
+    VECTOR vector1{1, 2, 3};
     TYPE scalar = 2;
 
-    matrix::Vector<TYPE> vector2 = vector1 * scalar;
+    VECTOR vector2 = vector1 * scalar;
 
     EXPECT_EQ(scalar, 2);
 
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({2, 4, 6}));
+    EXPECT_EQ(vector2, VECTOR({2, 4, 6}));
 }
 
 TEST(VectorScalarMultiplication, Reverse)
 {
-    matrix::Vector<TYPE> vector1({4, 2, -2});
+    VECTOR vector1{4, 2, -2};
     TYPE scalar = 5;
 
-    matrix::Vector<TYPE> vector2 = scalar * vector1;
+    VECTOR vector2 = scalar * vector1;
 
     EXPECT_EQ(scalar, 5);
 
-    EXPECT_EQ(vector2, matrix::Vector<TYPE>({20, 10, -10}));
+    EXPECT_EQ(vector2, VECTOR({20, 10, -10}));
 }
 
 TEST(VectorScalarMultiplication, AssignSimple)
 {
-    matrix::Vector<TYPE> vector1({4, 6, 10});
+    VECTOR vector1{4, 6, 10};
     TYPE scalar = 3;
 
     vector1 *= scalar;
 
     EXPECT_EQ(scalar, 3);
 
-    EXPECT_EQ(vector1, matrix::Vector<TYPE>({12, 18, 30}));
+    EXPECT_EQ(vector1, VECTOR({12, 18, 30}));
 }
 
 
@@ -122,105 +126,120 @@ TEST(VectorScalarMultiplication, AssignSimple)
 
 TEST(matrixEquality, Simple)
 {
-    matrix::Matrix<TYPE> matrix1({{1, 2},{3, 4}});
-    matrix::Matrix<TYPE> matrix2({{1, 2},{3, 4}});
+    MATRIX matrix1{{1, 2},{3, 4}};
+    MATRIX matrix2{{1, 2},{3, 4}};
 
     ASSERT_EQ(true, matrix1 == matrix2);
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 2},{3, 4}}));
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{1, 2},{3, 4}}));
+    MATRIX expected{{1, 2},{3, 4}};
+    EXPECT_EQ(matrix1, expected);
+    expected = {{1, 2},{3, 4}};
+    EXPECT_EQ(matrix2, expected);
 }
 
 /** Addition */
 
 TEST(MatrixAddition, Simple)
 {
-    matrix::Matrix<TYPE> matrix1({{1, 2},{1, 0}});
-    matrix::Matrix<TYPE> matrix2({{0, 5},{3, 4}});
+    MATRIX matrix1{{1, 2},{1, 0}};
+    MATRIX matrix2{{0, 5},{3, 4}};
 
-    matrix::Matrix<TYPE> matrix3 = matrix1 + matrix2;
+    MATRIX matrix3 = matrix1 + matrix2;
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 2},{1, 0}}));
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{0, 5},{3, 4}}));
+    MATRIX expected{{1, 2},{1, 0}};
+    EXPECT_EQ(matrix1, expected);
+    expected = {{0, 5},{3, 4}};
+    EXPECT_EQ(matrix2, expected);
 
-    EXPECT_EQ(matrix3, matrix::Matrix<TYPE>({{1, 7},{4, 4}}));
+    expected = {{1, 7},{4, 4}};
+    EXPECT_EQ(matrix3, expected);
 }
 
 TEST(MatrixAddition, AssignSimple)
 {
-    matrix::Matrix<TYPE> matrix1({{6, 2},{-2, 0}});
-    matrix::Matrix<TYPE> matrix2({{-3, 5},{1, -3}});
+    MATRIX matrix1{{6, 2},{-2, 0}};
+    MATRIX matrix2{{-3, 5},{1, -3}};
 
     matrix1 += matrix2;
 
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{-3, 5},{1, -3}}));
+    MATRIX expected{{-3, 5},{1, -3}};
+    EXPECT_EQ(matrix2, expected);
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{3, 7},{-1, -3}}));
+    expected = {{3, 7},{-1, -3}};
+    EXPECT_EQ(matrix1, expected);
 }
 
 /** Substraction */
 
 TEST(MatrixSubstraction, Simple)
 {
-    matrix::Matrix<TYPE> matrix1({{1, 2},{1, 0}});
-    matrix::Matrix<TYPE> matrix2({{-6, 2},{3, 4}});
+    MATRIX matrix1{{1, 2},{1, 0}};
+    MATRIX matrix2{{-6, 2},{3, 4}};
 
-    matrix::Matrix<TYPE> matrix3 = matrix1 - matrix2;
+    MATRIX matrix3 = matrix1 - matrix2;
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{1, 2},{1, 0}}));
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{-6, 2},{3, 4}}));
+    MATRIX expected{{1, 2},{1, 0}};
+    EXPECT_EQ(matrix1, expected);
+    expected = {{-6, 2},{3, 4}};
+    EXPECT_EQ(matrix2, expected);
 
-    EXPECT_EQ(matrix3, matrix::Matrix<TYPE>({{7, 0},{-2, -4}}));
+    expected = {{7, 0},{-2, -4}};
+    EXPECT_EQ(matrix3, expected);
 }
 
 TEST(MatrixSubstraction, AssignSimple)
 {
-    matrix::Matrix<TYPE> matrix1({{1, 2},{1, 0}});
-    matrix::Matrix<TYPE> matrix2({{-6, 2},{3, 4}});
+    MATRIX matrix1{{1, 2},{1, 0}};
+    MATRIX matrix2{{-6, 2},{3, 4}};
 
     matrix1 -= matrix2;
 
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{-6, 2},{3, 4}}));
+    MATRIX expected{{-6, 2},{3, 4}};
+    EXPECT_EQ(matrix2, expected);
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{7, 0},{-2, -4}}));
+    expected = {{7, 0},{-2, -4}};
+    EXPECT_EQ(matrix1, expected);
 }
 
 /** Scalar Multiplication */
 
 TEST(MatrixScalarMultiplication, Simple)
 {
-    matrix::Matrix<TYPE> matrix1({{1, 2},{3, 4}});
+    MATRIX matrix1{{1, 2},{3, 4}};
     TYPE scalar = 2;
 
-    matrix::Matrix<TYPE> matrix2 = matrix1 * scalar;
+    MATRIX matrix2 = matrix1 * scalar;
 
     EXPECT_EQ(scalar, 2);
 
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{2, 4},{6, 8}}));
+    MATRIX expected{{2, 4},{6, 8}};
+    EXPECT_EQ(matrix2, expected);
 }
 
 TEST(MatrixScalarMultiplication, Reverse)
 {
-    matrix::Matrix<TYPE> matrix1({{4, 2},{-2, 1}});
+    MATRIX matrix1{{4, 2},{-2, 1}};
     TYPE scalar = 5;
 
-    matrix::Matrix<TYPE> matrix2 = scalar * matrix1;
+    MATRIX matrix2 = scalar * matrix1;
 
     EXPECT_EQ(scalar, 5);
 
-    EXPECT_EQ(matrix2, matrix::Matrix<TYPE>({{20, 10},{-10, 5}}));
+    MATRIX expected{{20, 10},{-10, 5}};
+    EXPECT_EQ(matrix2, expected);
 }
 
 TEST(MatrixScalarMultiplication, AssignSimple)
 {
-    matrix::Matrix<TYPE> matrix1({{4, 6},{2, -3}});
+    MATRIX matrix1{{4, 6},{2, -3}};
     TYPE scalar = 3;
 
     matrix1 *= scalar;
 
     EXPECT_EQ(scalar, 3);
 
-    EXPECT_EQ(matrix1, matrix::Matrix<TYPE>({{12, 18},{6, -9}}));
+    MATRIX expected{{12, 18},{6, -9}};
+    EXPECT_EQ(matrix1, expected);
 }
 
 /***************************** */

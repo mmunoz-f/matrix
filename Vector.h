@@ -54,7 +54,7 @@ public:
 
     }
 
-    Vector(const std::initializer_list<T>& init) :
+    Vector(std::initializer_list<T> init) :
         _data(init)
     {
 
@@ -116,7 +116,7 @@ public:
         return *this;
     }
 
-    Vector& operator=(const std::initializer_list<T>& init)
+    Vector& operator=(std::initializer_list<T> init)
     {
         _data = init;
 

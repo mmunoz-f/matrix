@@ -12,8 +12,7 @@ class Vector;
 template<typename T>
 class Matrix
 {
-    typedef matrix::Vector<T> row;
-    typedef matrix::Vector<row> matrix_data;
+    typedef std::vector<T> matrix_data;
     
     typedef std::pair<size_t, size_t> shape_t;
 
@@ -34,7 +33,7 @@ public:
     }
 
     Matrix(const shape_t& shape, const T& value = T()) :
-        _data(shape.first, row(shape.second, value)),
+        _data(shape.first * shape.second, value),
         _shape(shape)
     {
 
@@ -47,27 +46,24 @@ public:
 
     }
 
-    Matrix(const matrix_data& input_data) :
-        _data(input_data),
+    Matrix(std::initializer_list<std::initializer_list<T> > init) :
+        _data(),
         _shape()
     {
-        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
+        _shape.first = init.size();
         if (_shape.first > 0)
-            _shape.second = _data[0].size(); 
-    }
+            _shape.second = init.begin()->size();
+        else
+            _shape.second = 0;
 
-    Matrix(const std::initializer_list<row>& init) :
-        _data(init),
-        _shape()
-    {
-        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
-        if (_shape.first > 0)
-            _shape.second = _data[0].size();
+        _data.reserve(_shape.first * _shape.second);
+        for (auto row : init)
+            _data.insert(_data.end(), row);
     }
 
     Matrix(const Vector<T>& vector) :
-        _data({{ vector._data }}),
-        _shape({ 1, vector.size() })
+        _data(vector._data),
+        _shape(1, vector.size())
     {
 
     }
@@ -77,15 +73,6 @@ public:
         _shape(std::move(other._shape))
     {
         
-    }
-
-    Matrix(matrix_data&& data) :
-        _data(std::move(data)),
-        _shape()
-    {
-        _shape.first = _data.size(); // TODO: if not transformed dimensions to literals, check data
-        if (_shape.first > 0)
-            _shape.second = _data[0].size();
     }
 
     ~Matrix()
@@ -108,32 +95,26 @@ public:
         return *this;
     }
 
-    Matrix& operator=(const matrix_data& data)
+    Matrix& operator=(std::initializer_list<std::initializer_list<T> > init)
     {
-        _data = data;
-
-        _shape.first = _data.size();
+        _shape.first = init.size();
         if (_shape.first > 0)
-            _shape.second = _data[0].size();
+            _shape.second = init.begin()->size();
+        else
+            _shape.second = 0;
 
-        return *this;
-    }
-
-    Matrix& operator=(const std::initializer_list<T>& init)
-    {
-        _data = init;
-
-        _shape.first = _data.size();
-        if (_shape.first > 0)
-            _shape.second = _data[0].size();
-
+        _data.clear();
+        _data.reserve(_shape.first * _shape.second);
+        for (auto row : init)
+            _data.insert(_data.end(), row);
+        
         return *this;
     }
 
     Matrix& operator=(const Vector<T>& vector)
     {
-        _data = {{ vector._data }};
-        _shape = { 1 , vector.size() };
+        _data = vector._data;
+        _shape = ( 1 , vector.size() );
 
         return *this;
     }
@@ -153,45 +134,39 @@ public:
         return *this;
     }
 
-    Matrix& operator=(matrix_data&& data)
-    {
-        _data = std::move(data);
-        _shape.first = _data.size();
-        if (_shape.first > 0)
-            _shape.second = _data[0].size();
-    }
-
 /***
  * Access methods
  */
 
     inline const T& operator()(size_t i, size_t j) const
     {
-        return _data[i][j];
+        return _data[i * _shape.second + j];
     }
 
     inline T& operator()(size_t i, size_t j)
     {
-        return _data[i][j];
+        return _data[i * _shape.second + j];
     }
 
-    inline const Vector<T>& operator[](size_t pos) const
+    const Vector<T> operator[](size_t pos) const
     {
-        return _data[pos];
+        Vector<T> row(_shape.second);
+
+        for (size_t i = 0; i < _shape.second; i++)
+        {
+            row[i] = (*this)(pos, i);
+        }
+
+        return row;
     }
 
-    inline Vector<T>& operator[](size_t pos)
-    {
-        return _data[pos];
-    }
-
-    const Vector<T> col(size_t pos) const // TODO: Improve matrix data access, make data secuencial access adding dims
+    const Vector<T> col(size_t pos) const
     {
         Vector<T> col(_shape.first);
 
         for (size_t i = 0; i < _shape.first; i++)
         {
-            col[i] = _data[i][pos];
+            col[i] = (*this)(i, pos);
         }
 
         return col;
@@ -223,7 +198,7 @@ public:
 
         for (size_t i = 0; i < _shape.first; i++)
         {
-            result += _data[i][i];
+            result += (*this)(i, i);
         }
 
         return result;
@@ -240,7 +215,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix(i, j) = _data[i][j] + other(i, j);
+                matrix(i, j) = (*this)(i, j) + other(i, j);
             }
 
         return matrix;
@@ -251,7 +226,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                _data[i][j] += other(i, j);
+                (*this)(i, j) += other(i, j);
             }
 
         return *this;
@@ -264,7 +239,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix(i, j) = _data[i][j] - other(i, j);
+                matrix(i, j) = (*this)(i, j) - other(i, j);
             }
 
         return matrix;
@@ -275,7 +250,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                _data[i][j] -= other(i, j);
+                (*this)(i, j) -= other(i, j);
             }
 
         return *this;
@@ -288,7 +263,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                matrix(i, j) = _data[i][j] * scalar;
+                matrix(i, j) = (*this)(i, j) * scalar;
             }
 
         return matrix;
@@ -299,7 +274,7 @@ public:
         for (size_t i = 0; i < shape().first; i++)
             for (size_t j = 0; j < shape().second; j++)
             {
-                _data[i][j] *= scalar;
+                (*this)(i, j) *= scalar;
             }
 
         return *this;
@@ -352,7 +327,7 @@ public:
 
         for (size_t i = 0; i < _shape.first; i++)
             for (size_t j = 0; j < _shape.second; j++)
-                if (_data[i][j] != other(i, j))
+                if ((*this)(i, j) != other(i, j))
                     return false;
 
         return true;
@@ -374,13 +349,13 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
 {
     os << "{ ";
 
-    for (auto row : matrix._data)
+    for (size_t i = 0; i < matrix._shape.first; i++)
     {
         os << "( ";
 
-        for (T value : row)
+        for (size_t j = 0; j < matrix._shape.second; j++)
         {
-            os << value << " ";
+            os << matrix(i, j) << " ";
         }
 
         os << ") ";
