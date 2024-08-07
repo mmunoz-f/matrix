@@ -244,6 +244,21 @@ public:
         return result;
     }
 
+    Matrix traspose() const
+    {
+        Matrix result;
+        result._shape = shape_t(_shape.second, _shape.first);
+        result._data.reserve(_shape.second * _shape.first);
+
+        for (size_t i = 0; i < _shape.second; i++)
+            for (size_t j = 0; j < _shape.first; j++)
+            {
+                result._data.push_back((*this)(j, i));
+            }
+
+        return result;
+    }
+
 /***
  * Arithmetic operations
  */
