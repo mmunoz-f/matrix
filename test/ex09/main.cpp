@@ -19,7 +19,7 @@ TEST(MatrixTraspose, Identity)
     EXPECT_EQ(result, MATRIX({{1, 0}, {0, 1}}));
 }
 
-TEST(MatrixTrace, Simple)
+TEST(MatrixTraspose, Simple)
 {
     MATRIX matrix{{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}};
 
@@ -30,7 +30,7 @@ TEST(MatrixTrace, Simple)
     EXPECT_EQ(result, MATRIX({{2, 4, -2}, {-5, 3, 3}, {0, 7, 4}}));
 }
 
-TEST(MatrixTrace, NotSquare)
+TEST(MatrixTraspose, NotSquare)
 {
     MATRIX matrix{{1, 0, 1}, {0, 1, 1}};
 

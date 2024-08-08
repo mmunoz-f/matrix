@@ -259,6 +259,51 @@ public:
         return result;
     }
 
+private:
+    void move_up_pivot(size_t row_index, size_t pivot)
+    {
+        const T zero_val = T();
+
+        for (size_t i = row_index + 1; i < _shape.first; i++)
+            if ((*this)(i, pivot) != zero_val)
+            {
+                Vector<T> tmp = row(row_index);
+                change_row(row_index, row(i));
+                change_row(i, tmp);
+                return;
+            }
+    }
+
+public:
+    Matrix row_echelon() const
+    {
+        const T zero_val = T();
+        Matrix result((*this));
+
+        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        {
+            if (result(i, pivot) == zero_val)
+                result.move_up_pivot(i, pivot);
+            if (result(i, pivot) == zero_val)
+            {
+                i--;
+                continue;
+            }
+
+            if (result(i, pivot) != 1)
+                result.change_row(i, result.row(i) * (1.f/result(i, pivot))); // Divide row by its first not null member
+
+            for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            {
+                if (j == i)
+                    continue;
+                result.change_row(j, result.row(j) - result(j, pivot) * result.row(i));
+            }
+        }
+
+        return result;
+    }
+
 /***
  * Arithmetic operations
  */

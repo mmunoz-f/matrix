@@ -255,6 +255,9 @@ public:
         for (size_t i = 0; i < dim; i++)
         {
             vector[i] = _data[i] * scalar;
+
+            if (vector[i] == 0) // TODO Cause sometimes -0.0f :)
+                vector[i] = 0;
         }
 
         return vector;
