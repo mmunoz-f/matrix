@@ -260,7 +260,7 @@ public:
     }
 
 private:
-    void move_up_pivot(size_t row_index, size_t pivot)
+    bool move_up_pivot(size_t row_index, size_t pivot)
     {
         const T zero_val = T();
 
@@ -270,8 +270,9 @@ private:
                 Vector<T> tmp = row(row_index);
                 change_row(row_index, row(i));
                 change_row(i, tmp);
-                return;
+                return true;
             }
+        return false;
     }
 
 public:
@@ -299,6 +300,43 @@ public:
                     continue;
                 result.change_row(j, result.row(j) - result(j, pivot) * result.row(i));
             }
+        }
+
+        return result;
+    }
+
+    T determinant() const
+    {
+        if (!is_square())
+            throw std::runtime_error(
+                "determinant: matrix is not square"
+            );
+
+        const T zero_val = T();
+        T result = 1;
+        Matrix row_echelon_form((*this));
+
+        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        {
+            if (row_echelon_form(i, pivot) == zero_val)
+                if (row_echelon_form.move_up_pivot(i, pivot))
+                    result *= -1; // Change sign if rows are changed; matrices properties duh
+
+            if (row_echelon_form(i, pivot) == zero_val)
+            {
+                i--;
+                continue;
+            }
+
+            for (size_t j = i + 1; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            {
+                row_echelon_form.change_row(j, row_echelon_form.row(j) - (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)) * row_echelon_form.row(i));
+            }
+        }
+
+        for (size_t i = 0; i < _shape.first; i++)
+        {
+            result *= row_echelon_form(i, i);
         }
 
         return result;
