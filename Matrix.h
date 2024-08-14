@@ -260,19 +260,25 @@ public:
     }
 
 private:
-    bool move_up_pivot(size_t row_index, size_t pivot)
+
+    void swap_row(size_t a, size_t b)
+    {
+        Vector<T> tmp = row(a);
+        change_row(a, row(b));
+        change_row(b, tmp);
+    }
+
+    std::pair<bool, std::pair<size_t, size_t> > move_up_pivot(size_t row_index, size_t pivot)
     {
         const T zero_val = T();
 
         for (size_t i = row_index + 1; i < _shape.first; i++)
             if ((*this)(i, pivot) != zero_val)
             {
-                Vector<T> tmp = row(row_index);
-                change_row(row_index, row(i));
-                change_row(i, tmp);
-                return true;
+                swap_row(row_index, i);
+                return std::pair(true, std::pair(row_index, i));
             }
-        return false;
+        return std::pair(false, std::pair(0, 0));
     }
 
 public:
@@ -319,7 +325,7 @@ public:
         for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
         {
             if (row_echelon_form(i, pivot) == zero_val)
-                if (row_echelon_form.move_up_pivot(i, pivot))
+                if (row_echelon_form.move_up_pivot(i, pivot).first)
                     result *= -1; // Change sign if rows are changed; matrices properties duh
 
             if (row_echelon_form(i, pivot) == zero_val)
@@ -340,6 +346,69 @@ public:
         }
 
         return result;
+    }
+
+    static Matrix identity(size_t size)
+    {
+        Matrix matrix(shape_t(size, size));
+
+        for (size_t i = 0; i < size; i++)
+        {
+            matrix(i, i) = 1;
+        }
+
+        return matrix;
+    }
+
+    Matrix inverse() const
+    {
+        if (!is_square())
+            throw std::runtime_error(
+                "inverse: matrix is not square"
+            );
+
+        const T zero_val = T();
+        Matrix tmp((*this));
+        const Matrix identity = Matrix::identity(_shape.first);
+        Matrix inverse(identity);
+
+        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        {
+            if (tmp(i, pivot) == zero_val)
+            {
+                auto swap_res = tmp.move_up_pivot(i, pivot);
+                if (swap_res.first)
+                    inverse.swap_row(swap_res.second.first, swap_res.second.second);
+            }
+            
+            if (tmp(i, pivot) == zero_val)
+            {
+                i--;
+                continue;
+            }
+
+            if (tmp(i, pivot) != 1)
+            {
+                T val = 1.f/tmp(i, pivot);
+                tmp.change_row(i, tmp.row(i) * val); // Divide row by its first not null member
+                inverse.change_row(i, inverse.row(i) * val);
+            }
+
+            for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            {
+                if (j == i)
+                    continue;
+                tmp.change_row(j, tmp.row(j) - tmp(j, pivot) * tmp.row(i));
+                inverse.change_row(j, inverse.row(j) - inverse(j, pivot) * inverse.row(i));
+            }
+        }
+
+        if (tmp != identity)
+            throw std::runtime_error(
+                "inverse: matrix is singular"
+            );
+
+        return inverse;
     }
 
 /***
