@@ -298,13 +298,17 @@ public:
             }
 
             if (result(i, pivot) != 1)
+            {
                 result.change_row(i, result.row(i) * (1.f/result(i, pivot))); // Divide row by its first not null member
+                result(i, pivot) = 1; // TODO ensure pivot is 1
+            }
 
             for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 if (j == i)
                     continue;
                 result.change_row(j, result.row(j) - result(j, pivot) * result.row(i));
+                result(j, pivot) = 0; // TODO ensure values above or below pivot are 0
             }
         }
 
@@ -337,6 +341,7 @@ public:
             for (size_t j = i + 1; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 row_echelon_form.change_row(j, row_echelon_form.row(j) - (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)) * row_echelon_form.row(i));
+                row_echelon_form(j, pivot) = 0; // TODO ensure values above or below pivot are 0
             }
         }
 
@@ -380,7 +385,7 @@ public:
                 if (swap_res.first)
                     inverse.swap_row(swap_res.second.first, swap_res.second.second);
             }
-            
+
             if (tmp(i, pivot) == zero_val)
             {
                 i--;
@@ -392,14 +397,17 @@ public:
                 T val = 1.f/tmp(i, pivot);
                 tmp.change_row(i, tmp.row(i) * val); // Divide row by its first not null member
                 inverse.change_row(i, inverse.row(i) * val);
+                tmp(i, pivot) = 1; // TODO ensure pivot is 1
             }
 
             for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 if (j == i)
                     continue;
-                tmp.change_row(j, tmp.row(j) - tmp(j, pivot) * tmp.row(i));
-                inverse.change_row(j, inverse.row(j) - inverse(j, pivot) * inverse.row(i));
+                T val = tmp(j, pivot);
+                tmp.change_row(j, tmp.row(j) - val * tmp.row(i));
+                inverse.change_row(j, inverse.row(j) - val * inverse.row(i));
+                tmp(j, pivot) = 0; // TODO ensure values above or below pivot are 0
             }
         }
 
@@ -588,7 +596,7 @@ inline Matrix<T> lerp(const Matrix<T>& a, const Matrix<T>& b, const float scalar
 
     for (size_t i = 0; i < result.shape().first; i++)
     {
-        result.change_row(i, linear_combination<float>(Vector<Vector<T> >{a[i], b[i]}, coefs));
+        result.change_row(i, linear_combination<float>(Vector<Vector<T> >{a.row(i), b.row(i)}, coefs));
     }
 
     return result;
