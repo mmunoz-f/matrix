@@ -2,29 +2,20 @@
 
 #include <gtest/gtest.h>
 
-#include "../../matrix.h"
-
-#define TYPE int 
-#define VECTOR matrix::Vector<TYPE>
+#include "../../matrix.h" 
 
 TEST(LinearCombination, Simple)
 {
-    std::vector<VECTOR> vectors{ {1, 2, 4}, {3, 5, 7} };
-    std::vector<TYPE> coefs{2, 4};
+    matrix::Vector<int, 3> vector1 = {1, 2, 4};
+    matrix::Vector<int, 3> vector2 = {3, 5, 7};
 
-    VECTOR vector = matrix::linear_combination<TYPE>(vectors, coefs);
+    matrix::Vector<matrix::Vector<int, 3>, 2> vectors = { vector1, vector2 };
+    matrix::Vector<int, 2> coefs = {2, 4};
 
-    EXPECT_EQ(vector, VECTOR({14, 24, 36}));
-}
+    auto vector = matrix::linear_combination(vectors, coefs);
 
-TEST(LinearCombination, BadNCoefs)
-{
-    std::vector<VECTOR> vectors{ {1, 2, 4}, {3, 5, 7} };
-    std::vector<TYPE> coefs{2, 4, 6};
-
-    EXPECT_THROW({
-        VECTOR vector = matrix::linear_combination<TYPE>(vectors, coefs);
-    }, std::runtime_error);
+    matrix::Vector<int, 3> expt = {14, 24, 36};
+    EXPECT_EQ(vector, expt);
 }
 
 /***************************** */

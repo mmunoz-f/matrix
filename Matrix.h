@@ -4,146 +4,54 @@
 #include <vector>
 #include <ostream>
 
+#define ASSER_MESSAGE_WRONG_DIM_INITIALIZATION(a, b, c, d) \
+
+
 namespace matrix {
 
-template<typename T>
+template<typename T, size_t N>
 class Vector;
 
-template<typename T>
-class Matrix
+template<typename T, size_t M, size_t N>
+class Matrix : public std::array<T, M * N>
 {
-    typedef std::vector<T> matrix_data;
-    
-    typedef std::pair<size_t, size_t> shape_t;
-
-    matrix_data _data;
-    shape_t _shape;
 
 public:
+
+struct Shape
+{
+    static constexpr size_t M = M;
+    static constexpr size_t N = N;
+}
+
+static constexpr Shape shape;
 
 /***
  * Constructors
  */
 
-    Matrix() :
-        _data(),
-        _shape()
+    Matrix(std::array<std::array<T, N>, M> init) :
     {
-
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
+            {
+                (*this)(i, j) = init[i][j];
+            }
     }
 
-    Matrix(const shape_t& shape, const T& value = T()) :
-        _data(shape.first * shape.second, value),
-        _shape(shape)
-    {
-
-    }
-
-    Matrix(const Matrix& other) :
-        _data(other._data),
-        _shape(other._shape)
-    {
-
-    }
-
-    Matrix(std::initializer_list<std::initializer_list<T> > init) :
-        _data(),
-        _shape()
-    {
-        _shape.first = init.size();
-        if (_shape.first > 0)
-            _shape.second = init.begin()->size();
-        else
-            _shape.second = 0;
-
-        _data.reserve(_shape.first * _shape.second);
-        for (auto row : init)
-        {
-            if (row.size() != _shape.second)
-                throw std::runtime_error(
-                    "Matrix initializer list constructor: not all nodes had the same size"
-                );
-
-            _data.insert(_data.end(), row);
-        }
-    }
-
-    Matrix(const Vector<T>& vector) :
-        _data(vector._data),
-        _shape(1, vector.size())
-    {
-
-    }
-
-    Matrix(Matrix&& other) :
-        _data(std::move(other._data)),
-        _shape(std::move(other._shape))
-    {
-        
-    }
-
-    ~Matrix()
-    {
-        
-    }
+    Matrix(std::initializer_list<>)
 
 /***
  * Assign operations
  */
 
-    Matrix& operator=(const Matrix& other)
+    Matrix& operator=(std::array<std::array<T, N>, M> init)
     {
-        if (this != &other)
-        {
-            _data = other._data;
-            _shape = other._shape;
-        }
-
-        return *this;
-    }
-
-    Matrix& operator=(std::initializer_list<std::initializer_list<T> > init)
-    {
-        _shape.first = init.size();
-        if (_shape.first > 0)
-            _shape.second = init.begin()->size();
-        else
-            _shape.second = 0;
-
-        _data.clear();
-        _data.reserve(_shape.first * _shape.second);
-        for (auto row : init)
-        {
-            if (row.size() != _shape.second)
-                throw std::runtime_error(
-                    "Matrix initializer list constructor: not all nodes had the same size"
-                );
-
-            _data.insert(_data.end(), row);
-        }
-
-        return *this;
-    }
-
-    Matrix& operator=(const Vector<T>& vector)
-    {
-        _data = vector._data;
-        _shape = ( 1 , vector.size() );
-
-        return *this;
-    }
-
-/***
- * Move operations
- */
-
-    Matrix& operator=(Matrix&& other)
-    {
-        if (this != &other)
-        {
-            _data = std::move(other._data);
-            _shape = std::move(other._shape);
-        }
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
+            {
+                (*this)(i, j) = init[i][j];
+            }
 
         return *this;
     }
@@ -154,7 +62,7 @@ public:
 
     inline const T& operator()(size_t i, size_t j) const
     {
-        return _data[i * _shape.second + j];
+        return data()[i * _shape.second + j];
     }
 
     inline T& operator()(size_t i, size_t j)
@@ -162,11 +70,11 @@ public:
         return _data[i * _shape.second + j];
     }
 
-    const Vector<T> row(size_t pos) const
+    const Vector<T, N> row(size_t pos) const
     {
-        Vector<T> row(_shape.second);
+        Vector<T, N> row();
 
-        for (size_t i = 0; i < _shape.second; i++)
+        for (size_t i = 0; i < Shape::N; i++)
         {
             row[i] = (*this)(pos, i);
         }
@@ -174,11 +82,11 @@ public:
         return row;
     }
 
-    const Vector<T> col(size_t pos) const
+    const Vector<T, M> col(size_t pos) const
     {
-        Vector<T> col(_shape.first);
+        Vector<T, M> col();
 
-        for (size_t i = 0; i < _shape.first; i++)
+        for (size_t i = 0; i < Shape::M; i++)
         {
             col[i] = (*this)(i, pos);
         }
@@ -186,74 +94,59 @@ public:
         return col;
     }
 
-    void change_row(size_t row_index, const Vector<T>& row)
+    void change_row(size_t row_index, const Vector<T, N>& row)
     {
-        if (row.size() != _shape.second)
-            throw std::runtime_error(
-                "Matrix change_row: new row had not correct size"
-            );
-
-        for (size_t i = 0; i < _shape.second; i++)
+        for (size_t i = 0; i < Shape::N; i++)
         {
             (*this)(row_index, i) = row[i];
         }
     }
 
-    void change_col(size_t col_index, const Vector<T>& col)
+    void change_col(size_t col_index, const Vector<T, M>& col)
     {
-        if (col.size() != _shape.first)
-            throw std::runtime_error(
-                "Matrix change_col: new col had not correct size"
-            );
-
-        for (size_t i = 0; i < _shape.first; i++)
+        for (size_t i = 0; i < Shape::M; i++)
         {
             (*this)(i, col_index) = col[i];
         }
     }
 
-    inline const shape_t &shape() const
+    constexpr Shape &shape() const // Todo check if Shape is instanciated and correct if posible
     {
-        return _shape;
+        return shape;
     }
 
-    inline bool is_square() const
+    constexpr bool is_square() const
     {
-        return _shape.first == _shape.second;
+        return Shape::M == Shape::N;
     }
 
-    inline size_t total_elements() const
+    constexpr size_t total_elements() const
     {
-        return _shape.first * _shape.second;
+        return Shape::M * Shape::N;
     }
 
     T trace() const
     {
-        if (!is_square())
-            throw std::runtime_error(
-                "trace: matrix is not square"
-            );
+        static_assert(is_square(), "matrix is not square");
 
         T result = T();
 
-        for (size_t i = 0; i < _shape.first; i++) // TODO optimize loops itter adding _shape.second to i
+        for (size_t i = 0; i < Shape::M; i++)
         {
-            result += (*this)(i, i);
+            result += data()(i, i);
         }
 
         return result;
     }
 
-    Matrix traspose() const
+    Matrix<T, N, M> traspose() const
     {
-        Matrix result;
-        result._shape = shape_t(_shape.second, _shape.first);
-        result._data.reserve(_shape.second * _shape.first);
+        Matrix<T, N, M> result();
 
-        for (size_t i = 0; i < _shape.second; i++)
-            for (size_t j = 0; j < _shape.first; j++)
+        for (size_t i = 0; i < Shape::N; i++)
+            for (size_t j = 0; j < Shape::M; j++)
             {
-                result._data.push_back((*this)(j, i));
+                result(i, j) = (*this)(j, i);
             }
 
         return result;
@@ -263,7 +156,7 @@ private:
 
     void swap_row(size_t a, size_t b)
     {
-        Vector<T> tmp = row(a);
+        Vector<T, N> tmp = row(a);
         change_row(a, row(b));
         change_row(b, tmp);
     }
@@ -272,7 +165,7 @@ private:
     {
         const T zero_val = T();
 
-        for (size_t i = row_index + 1; i < _shape.first; i++)
+        for (size_t i = row_index + 1; i < Shape::M; i++)
             if ((*this)(i, pivot) != zero_val)
             {
                 swap_row(row_index, i);
@@ -287,7 +180,7 @@ public:
         const T zero_val = T();
         Matrix result((*this));
 
-        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        for (size_t i = 0, pivot = 0; i < Shape::M && pivot < Shape::N; i++, pivot++)
         {
             if (result(i, pivot) == zero_val)
                 result.move_up_pivot(i, pivot);
@@ -300,15 +193,15 @@ public:
             if (result(i, pivot) != 1)
             {
                 result.change_row(i, result.row(i) * (1.f/result(i, pivot))); // Divide row by its first not null member
-                result(i, pivot) = 1; // TODO ensure pivot is 1
+                result(i, pivot) = 1; // TODO a better way? to ensure pivot is 1
             }
 
-            for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            for (size_t j = 0; j < Shape::M; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 if (j == i)
                     continue;
                 result.change_row(j, result.row(j) - result(j, pivot) * result.row(i));
-                result(j, pivot) = 0; // TODO ensure values above or below pivot are 0
+                result(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
             }
         }
 
@@ -317,16 +210,13 @@ public:
 
     T determinant() const
     {
-        if (!is_square())
-            throw std::runtime_error(
-                "determinant: matrix is not square"
-            );
+        static_assert(is_square(), "matrix is not square");
 
         const T zero_val = T();
         T result = 1;
         Matrix row_echelon_form((*this));
 
-        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        for (size_t i = 0, pivot = 0; i < Shape::M && pivot < Shape::N; i++, pivot++)
         {
             if (row_echelon_form(i, pivot) == zero_val)
                 if (row_echelon_form.move_up_pivot(i, pivot).first)
@@ -338,14 +228,14 @@ public:
                 continue;
             }
 
-            for (size_t j = i + 1; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            for (size_t j = i + 1; j < Shape::M; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 row_echelon_form.change_row(j, row_echelon_form.row(j) - (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)) * row_echelon_form.row(i));
-                row_echelon_form(j, pivot) = 0; // TODO ensure values above or below pivot are 0
+                row_echelon_form(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
             }
         }
 
-        for (size_t i = 0; i < _shape.first; i++)
+        for (size_t i = 0; i < Shape::M; i++)
         {
             result *= row_echelon_form(i, i);
         }
@@ -353,11 +243,11 @@ public:
         return result;
     }
 
-    static Matrix identity(size_t size)
+    static Matrix identity() // TODO Can i build it in compile time, make it constexpr
     {
-        Matrix matrix(shape_t(size, size));
+        Matrix matrix();
 
-        for (size_t i = 0; i < size; i++)
+        for (size_t i = 0; i < Shape::M; i++)
         {
             matrix(i, i) = 1;
         }
@@ -367,17 +257,14 @@ public:
 
     Matrix inverse() const
     {
-        if (!is_square())
-            throw std::runtime_error(
-                "inverse: matrix is not square"
-            );
+        static_assert(is_square(), "matrix is not square");
 
         const T zero_val = T();
         Matrix tmp((*this));
-        const Matrix identity = Matrix::identity(_shape.first);
+        const Matrix identity = Matrix::identity(Shape::M);
         Matrix inverse(identity);
 
-        for (size_t i = 0, pivot = 0; i < _shape.first && pivot < _shape.second; i++, pivot++)
+        for (size_t i = 0, pivot = 0; i < Shape::M && pivot < Shape::N; i++, pivot++)
         {
             if (tmp(i, pivot) == zero_val)
             {
@@ -397,17 +284,17 @@ public:
                 T val = 1.f/tmp(i, pivot);
                 tmp.change_row(i, tmp.row(i) * val); // Divide row by its first not null member
                 inverse.change_row(i, inverse.row(i) * val);
-                tmp(i, pivot) = 1; // TODO ensure pivot is 1
+                tmp(i, pivot) = 1; // TODO a better way? to ensure pivot is 1
             }
 
-            for (size_t j = 0; j < _shape.first; j++) // Substract lines by pivot line * first not null elm of current line
+            for (size_t j = 0; j < Shape::M; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 if (j == i)
                     continue;
                 T val = tmp(j, pivot);
                 tmp.change_row(j, tmp.row(j) - val * tmp.row(i));
                 inverse.change_row(j, inverse.row(j) - val * inverse.row(i));
-                tmp(j, pivot) = 0; // TODO ensure values above or below pivot are 0
+                tmp(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
             }
         }
 
@@ -425,10 +312,10 @@ public:
 
     Matrix operator+(const Matrix& other) const
     {
-        Matrix matrix(shape());
+        Matrix matrix();
 
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 matrix(i, j) = (*this)(i, j) + other(i, j);
             }
@@ -438,8 +325,8 @@ public:
 
     Matrix& operator+=(const Matrix& other)
     {
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 (*this)(i, j) += other(i, j);
             }
@@ -449,10 +336,10 @@ public:
 
     Matrix operator-(const Matrix& other) const
     {
-        Matrix matrix(shape());
+        Matrix matrix();
 
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 matrix(i, j) = (*this)(i, j) - other(i, j);
             }
@@ -462,8 +349,8 @@ public:
 
     Matrix& operator-=(const Matrix& other)
     {
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 (*this)(i, j) -= other(i, j);
             }
@@ -473,10 +360,10 @@ public:
 
     Matrix operator*(const T& scalar) const
     {
-        Matrix matrix(shape());
+        Matrix matrix();
 
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 matrix(i, j) = (*this)(i, j) * scalar;
             }
@@ -486,8 +373,8 @@ public:
 
     Matrix& operator*=(const T& scalar)
     {
-        for (size_t i = 0; i < shape().first; i++)
-            for (size_t j = 0; j < shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < Shape::N; j++)
             {
                 (*this)(i, j) *= scalar;
             }
@@ -495,17 +382,13 @@ public:
         return *this;
     }
 
-    Vector<T> operator*(const Vector<T>& u) const
+    Vector<T, M> operator*(const Vector<T, N>& u) const
     {
-        const size_t dim = u.size();
-        if (_shape.second != dim)
-            throw std::runtime_error(
-                "matrix*vector multiplication: invalid multiplication, check dims of both object"
-            );
+        static_assert(Shape::N != u.size(), "invalid multiplication, vector size(N) must be equal to matrix ncols(M)");
 
-        Vector<T> result(_shape.first);
+        Vector<T, M> result();
 
-        for (size_t i = 0; i < _shape.first; i++)
+        for (size_t i = 0; i < Shape::M; i++)
         {
             result[i] = u.dot(row(i));
         }
@@ -513,17 +396,15 @@ public:
         return result;
     }
 
-    Matrix operator*(const Matrix& other) const
+    template<size_t O, size_t P>
+    Matrix<T, M, P> operator*(const Matrix<T, O, P>& other) const // TODO
     {
-        if (_shape.second != other.shape().first)
-            throw std::runtime_error(
-                "matrix*matrix multiplication: invalid multiplication, check dims of both object"
-            );
+        static_assert(Shape::N != other.shape().M, "invalid multiplication, first matrix ncols(M) must be equal to second matrix nrows(N)");
 
-        Matrix<T> result(shape_t(_shape.first, other.shape().second));
+        Matrix<T, M, P> result();
 
-        for (size_t i = 0; i < _shape.first; i++)
-            for (size_t j = 0; j < other.shape().second; j++)
+        for (size_t i = 0; i < Shape::M; i++)
+            for (size_t j = 0; j < other.shape().N; j++)
             {
                 result(i, j) = row(i).dot(other.col(j));
             }
@@ -531,44 +412,54 @@ public:
         return result;
     }
 
-/***
- * Equality operations
- */
+    template<size_t O>
+    friend Vector<T, O>;
 
-    bool operator==(const Matrix& other) const
-    {
-        if (_shape != other._shape)
-            return false;
-
-        for (size_t i = 0; i < _shape.first; i++)
-            for (size_t j = 0; j < _shape.second; j++)
-                if ((*this)(i, j) != other(i, j))
-                    return false;
-
-        return true;
-    }
-
-    inline bool operator!=(const Matrix& other) const
-    {
-        return !(*this == other);
-    }
-
-    friend Vector<T>;
-
-    template<typename t>
-    friend std::ostream& operator<<(std::ostream& os, const Matrix<t>& matrix);
+    template<typename t, size_t m, size_t n>
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<t, m, n>& matrix);
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
+template<typename T, size_t N>
+class Matrix<T, 1, N>
+{
+
+public:
+
+    Matrix(const Vector<T, N>& vector)
+    {
+        for (size_t i = 0; Shape::N; i++)
+        {
+            data()[i] = vector[i];
+        }
+    }
+
+    Matrix& operator=(const Vector<T, N>& vector)
+    {
+        for (size_t i = 0; Shape::N; i++)
+        {
+            data()[i] = vector[i];
+        }
+
+        return *this;
+    }
+};
+
+template<typename T, size_t M, size_t N>
+inline std::ostream& operator<<(std::ostream& os, const typename Matrix<T, M, N>::Shape& shape)
+{
+    os << " (" << shape.m << "x" << shape.n << ")";
+}
+
+template<typename T, size_t M, size_t N>
+std::ostream& operator<<(std::ostream& os, const Matrix<T, M, N>& matrix)
 {
     os << "{ ";
 
-    for (size_t i = 0; i < matrix._shape.first; i++)
+    for (size_t i = 0; i < matrix.shape().m; i++)
     {
         os << "( ";
 
-        for (size_t j = 0; j < matrix._shape.second; j++)
+        for (size_t j = 0; j < matrix.shape().n; j++)
         {
             os << matrix(i, j) << " ";
         }
@@ -578,25 +469,25 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
     
     os << "}";
 
-    os << " (" << matrix._shape.first << "x" << matrix._shape.second << ")";
+    os << matrix.shape;
     return os;
 }
 
-template<typename T>
-Matrix<T> operator*(const T scalar, const Matrix<T>& matrix)
+template<typename T, size_t M, size_t N>
+Matrix<T, M, N> operator*(const T scalar, const Matrix<T, M, N>& matrix)
 {
     return matrix * scalar;
 }
 
-template<typename T>
-inline Matrix<T> lerp(const Matrix<T>& a, const Matrix<T>& b, const float scalar)
+template<typename T, size_t M, size_t N>
+inline Matrix<T, M, N> lerp(const Matrix<T, M, N>& a, const Matrix<T, M, N>& b, const float scalar)
 {
-    Matrix<T> result(a.shape());
-    const Vector<float> coefs({1 - scalar, scalar});
+    Matrix<T, M, N> result();
+    const Vector<float, 2> coefs({1 - scalar, scalar});
 
-    for (size_t i = 0; i < result.shape().first; i++)
+    for (size_t i = 0; i < result.shape().m; i++)
     {
-        result.change_row(i, linear_combination<float>(Vector<Vector<T> >{a.row(i), b.row(i)}, coefs));
+        result.change_row(i, linear_combination<float>(Vector<Vector<T, N>, 2>{a.row(i), b.row(i)}, coefs));
     }
 
     return result;

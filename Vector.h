@@ -1,7 +1,8 @@
 #pragma once
 
+#include <concepts>
 #include <utility>
-#include <vector>
+#include <array>
 #include <ostream>
 #include <cmath>
 
@@ -9,18 +10,14 @@
 
 namespace matrix {
 
-template<typename T>
+template<typename T, size_t M, size_t N>
 class Matrix;
 
-template<typename T>
+template<typename T, size_t N>
 class Vector
 {
-    typedef std::vector<T> vector_data;
 
-    typedef typename vector_data::iterator iterator;
-    typedef typename vector_data::const_iterator const_iterator;
-
-    vector_data _data;
+    std::array<T, N> _data;
 
 public:
 
@@ -28,135 +25,136 @@ public:
  * Constructors
  */
 
-    Vector() :
-        _data()
+    Vector()
+    :   _data()
     {
 
     }
 
-    explicit Vector(size_t size, const T& value = T()) :
-        _data(size, value)
+    Vector(std::same_as<T> auto ... init)
+        requires (sizeof...(init) == N)
+    :   _data{init ...}
     {
 
     }
 
-    Vector(const Vector& other) :
-        _data(other._data)
+    template <size_t O, size_t P>
+    Vector(const Matrix<T, O, P>& matrix)
+        requires (O * P == N)
     {
-
-    }
-
-    Vector(const vector_data& data) :
-        _data(data)
-    {
-
-    }
-
-    Vector(std::initializer_list<T> init) :
-        _data(init)
-    {
-
-    }
-
-    Vector(const Matrix<T>& matrix) :
-        _data()
-    {
-        _data.reserve(matrix.total_elements());
-
-        for (auto row : matrix._data)
-            for (T value : row)
-            {
-                _data.push_back(value);
-            }
-    }
-
-    template<class _itetator>
-    Vector(const _itetator& begin, const _itetator& end)
-    {
-        _data = vector_data(begin, end);
-    }
-
-    Vector(Vector&& other) :
-        _data(std::move(other._data))
-    {
-
-    }
-
-    Vector(vector_data&& data) :
-        _data(std::move(data))
-    {
-
-    }
-
-    ~Vector()
-    {
-
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] = matrix._data[i];
+        }
     }
 
 /***
  * Assign operations
  */
 
-    Vector& operator=(const Vector& other)
+
+    Vector& operator=(std::same_as<T> auto ... init)
+        requires (sizeof...(init) == N)
     {
-        if (this != &other)
+        _data = {init ...};
+
+        return *this;
+    }
+
+    template<size_t O, size_t P>
+    Vector& operator=(const Matrix<T, O, P>& matrix)
+        requires (O * P == N)
+    {
+        for (size_t i = 0; i < size(); i++)
         {
-            _data = other._data;
+            _data[i] = matrix._data[i];
         }
 
         return *this;
     }
 
-    Vector& operator=(const vector_data& data)
-    {
-        _data = data;
-
-        return *this;
-    }
-
-    Vector& operator=(std::initializer_list<T> init)
-    {
-        _data = init;
-
-        return *this;
-    }
-
-    Vector& operator=(const Matrix<T>& matrix)
-    {
-        _data.clear();
-        _data.reserve(matrix.total_elements());
-
-        for (auto row : matrix._data)
-            for (T value : row)
-            {
-                _data.push_back(value);
-            }
-    }
+    
 
 /***
- * Move operations
+ * Arithmetics operations
  */
 
-    Vector& operator=(Vector&& other)
+    Vector operator+(const Vector& other) const
     {
-        if (this != &other)
+        Vector vector;
+
+        for (size_t i = 0; i < size(); i++)
         {
-            _data = std::move(other._data);
+            vector[i] = _data[i] + other[i];
+        }
+
+        return vector;
+    }
+
+    Vector& operator+=(const Vector& other)
+    {
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] += other[i];
         }
 
         return *this;
     }
 
-    Vector& operator=(vector_data&& data)
+    Vector operator-(const Vector& other) const
     {
-        _data = std::move(data);
+        Vector vector;
+        
+        for (size_t i = 0; i < size(); i++)
+        {
+            vector[i] = _data[i] - other[i];
+        }
+
+        return vector;
+    }
+
+    Vector& operator-=(const Vector& other)
+    {
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] -= other[i];
+        }
 
         return *this;
     }
 
-/***
- * Access methods
- */
+    template<typename S>
+    auto operator*(const S& scalar) const
+    -> Vector<decltype(std::declval<T>() * std::declval<S>()), N>
+    {
+        Vector vector;
+
+        for (size_t i = 0; i < size(); i++)
+        {
+            vector[i] = _data[i] * scalar;
+
+            if (vector[i] == 0) // TODO Cause sometimes -0.0f :)
+                vector[i] = 0;
+        }
+
+        return vector;
+    }
+
+    template<typename S>
+    Vector& operator*=(const S& scalar)
+    {
+        for (size_t i = 0; i < size(); i++)
+        {
+            _data[i] *= scalar;
+        }
+
+        return *this;
+    }
+
+    constexpr size_t size() const
+    {
+        return _data.size();
+    }
 
     inline const T& operator[](size_t pos) const
     {
@@ -168,120 +166,11 @@ public:
         return _data[pos];
     }
 
-    inline size_t size() const
-    {
-        return _data.size();
-    }
-
-    inline const_iterator begin() const
-    {
-        return _data.begin();
-    }
-
-    inline iterator begin()
-    {
-        return _data.begin();
-    }
-
-    inline const_iterator end() const
-    {
-        return _data.end();
-    }
-
-    inline iterator end()
-    {
-        return _data.end();
-    }
-
-/***
- * Arithmetics operations
- */
-
-    Vector operator+(const Vector& other) const
-    {
-        size_t dim = size();
-        Vector vector(dim);
-        
-        for (size_t i = 0; i < dim; i++) // TODO: change to only make size one time or use literal when optimized
-        {
-            vector[i] = _data[i] + other[i];
-        }
-
-        return vector;
-    }
-
-    Vector& operator+=(const Vector& other)
-    {
-        size_t dim = size();
-
-        for (size_t i = 0; i < dim; i++)
-        {
-            _data[i] += other[i];
-        }
-
-        return *this;
-    }
-
-    Vector operator-(const Vector& other) const
-    {
-        size_t dim = size();
-        Vector vector(dim);
-        
-        for (size_t i = 0; i < dim; i++)
-        {
-            vector[i] = _data[i] - other[i];
-        }
-
-        return vector;
-    }
-
-    Vector& operator-=(const Vector& other)
-    {
-        size_t dim = size();
-
-        for (size_t i = 0; i < dim; i++)
-        {
-            _data[i] -= other[i];
-        }
-
-        return *this;
-    }
-
-    Vector operator*(const T& scalar) const
-    {
-        size_t dim = size();
-        Vector vector(dim);
-
-        for (size_t i = 0; i < dim; i++)
-        {
-            vector[i] = _data[i] * scalar;
-
-            if (vector[i] == 0) // TODO Cause sometimes -0.0f :)
-                vector[i] = 0;
-        }
-
-        return vector;
-    }
-
-    Vector& operator*=(const T& scalar)
-    {
-        size_t dim = size();
-        Vector vector(dim);
-
-        for (size_t i = 0; i < dim; i++)
-        {
-            _data[i] *= scalar;
-        }
-
-        return *this;
-    }
-
     T dot(const Vector& other) const
     {
-        size_t dim = size();
         T result = T();
 
-        for (size_t i = 0; i < dim; i++)
+        for (size_t i = 0; i < size(); i++)
         {
             result = std::fma(_data[i], other[i], result);
         }
@@ -293,9 +182,9 @@ public:
     {
         T result = T();
 
-        for (T val : _data)
+        for (size_t i = 0; i < size(); i++)
         {   
-            result += val;
+            result += _data[i];
         }
 
         return result;
@@ -303,10 +192,9 @@ public:
 
     float norm() const
     {
-        size_t dim = size();
         float result = 0.f;
 
-        for (size_t i = 0; i < dim; i++)
+        for (size_t i = 0; i < size(); i++)
         {
             result = std::fma(_data[i], _data[i], result);
         }
@@ -316,10 +204,9 @@ public:
 
     T norm_inf() const
     {
-        size_t dim = size();
         T max = abs(_data[0]);
 
-        for (size_t i = 1; i < dim; i++)
+        for (size_t i = 1; i < size(); i++)
         {
             max = std::max(max, abs(_data[i]));
         }
@@ -327,38 +214,29 @@ public:
         return max;
     }
 
-/***
- * Equality operators
- */
+    /***
+    * Equality operators
+    */
 
     bool operator==(const Vector& other) const
     {
-        size_t dim = size();
-        if (dim != other.size())
-            return false;
-        
-        for (size_t i = 0; i < dim; i++)
-        {
-            if (_data[i] != other[i])
-                return false;
-        }
-
-        return true;
+        return _data == other._data;
     }
 
     inline bool operator!=(const Vector& other) const
     {
-        return !(*this == other);
+        return _data != other._data;
     }
 
-    friend Matrix<T>;
+    template<typename t, size_t m, size_t n>
+    friend class Matrix;
 
-    template<typename t>
-    friend std::ostream& operator<<(std::ostream& os, const Vector<t>& vector);
-};
+    template<typename t, size_t n>
+    friend std::ostream& operator<<(std::ostream& os, const Vector<t, n>& vector);
+}; // Class Vector
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
+template<typename T, size_t N>
+std::ostream& operator<<(std::ostream& os, const Vector<T, N>& vector)
 {
     os << "( ";
     
@@ -371,28 +249,20 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vector)
     return os;
 }
 
-template<typename T>
-Vector<T> operator*(const T& scalar, const Vector<T>& vector)
+template<typename T, size_t N>
+Vector<T, N> operator*(const T& scalar, const Vector<T, N>& vector)
 {
     return vector * scalar;
 }
 
-template<typename T, class container1, class container2>
-Vector<T> linear_combination(const container1& vectors, const container2& coefs) // TODO: check T and (container1&container2)::value_type, is the same in comp time
+template<typename T, typename S, size_t N, size_t M>
+Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& vectors, const Vector<S, M>& coefs)
 {
-    const size_t n_coefs = coefs.size();
-
-    if (n_coefs != vectors.size()) // TODO in comp time?
-        throw std::runtime_error(
-            "linear combination: number of coeficients and number of vectors do not match"
-        );
-
-    const size_t dim = vectors[0].size();
-    Vector<T> result(dim);
+    Vector<T, N> result;
     
-    for (size_t i = 0; i < dim; i++)
+    for (size_t i = 0; i < N; i++)
     {
-        for (size_t j = 0; j < n_coefs; j++)
+        for (size_t j = 0; j < M; j++)
         {
             result[i] = std::fma(vectors[j][i], coefs[j], result[i]);
         }
@@ -401,27 +271,22 @@ Vector<T> linear_combination(const container1& vectors, const container2& coefs)
     return result;
 }
 
-template<typename T>
-inline Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const float scalar)
+template<typename T, size_t N>
+inline Vector<T, N> lerp(const Vector<T, N>& u, const Vector<T, N>& v, const float scalar)
 {
-    return linear_combination<float>(Vector<Vector<T> >({u, v}), Vector<float>({1 - scalar, scalar}));
+    return linear_combination(Vector<Vector<T, N>, 2>({u, v}), Vector<float, 2>({1 - scalar, scalar}));
 }
 
-template<typename T>
-inline T   angle_cos(const Vector<T>& u, const Vector<T>& v)
+template<typename T, size_t N>
+inline T   angle_cos(const Vector<T, N>& u, const Vector<T, N>& v)
 {
     return u.dot(v) / (u.norm() * v.norm());
 }
 
 template<typename T>
-Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) // TODO: Check size to be only 3 in comp time
+Vector<T, 3> cross_product(const Vector<T, 3>& u, const Vector<T, 3>& v)
 {
-    if (u.size() != 3 || v.size() != 3)
-        throw std::runtime_error(
-            "cross product: dims of vectors must be 3"
-        );
-
-    Vector<T> result({
+    Vector<T, 3> result({
         -(v[1] * u[2]),
         -(u[0] * v[2]),
         -(u[1] * v[0])
@@ -433,4 +298,4 @@ Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) // TODO: Check s
     return result;
 }
 
-}
+} // namespace matrix
