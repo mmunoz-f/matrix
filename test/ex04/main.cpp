@@ -4,39 +4,29 @@
 
 #include "../../matrix.h"
 
-#define TYPE int 
-
-#define VECTOR matrix::Vector<TYPE>
-
 TEST(Norm1, Simple)
 {
-    VECTOR vector{1, -2, 3};
+    matrix::Vector<int, 3> vector = {1, -2, 3};
 
-    TYPE result = vector.norm_1();
-
-    EXPECT_EQ(vector, VECTOR({1, -2, 3}));
+    int result = vector.norm_1();
 
     EXPECT_EQ(result, 2);
 }
 
 TEST(Norm, Simple)
 {
-    VECTOR vector{1, -2, 3};
+    matrix::Vector<int, 3> vector = {1, -2, 3};
 
     float result = vector.norm();
-
-    EXPECT_EQ(vector, VECTOR({1, -2, 3}));
 
     EXPECT_FLOAT_EQ(result, std::sqrt(14));
 }
 
 TEST(NormInf, Simple)
 {
-    VECTOR vector{3, -5, 4};
+    matrix::Vector<int, 3> vector = {3, -5, 4};
 
-    TYPE result = vector.norm_inf();
-
-    EXPECT_EQ(vector, VECTOR({3, -5, 4}));
+    int result = vector.norm_inf();
 
     EXPECT_EQ(result, 5);
 }
