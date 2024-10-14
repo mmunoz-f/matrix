@@ -102,133 +102,127 @@ TEST(VectorScalarMultiplication, AssignSimple)
 }
 
 
-// /***
-//  * Matrix
-//  */
+/***
+ * Matrix
+ */
 
-// /** Equality */
+/** Equality */
 
-// TEST(matrixEquality, Simple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{1, 2},{3, 4}};
-//     matrix::Matrix<int, 3, 3> matrix2{{1, 2},{3, 4}};
+TEST(matrixEquality, Simple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = {1, 2,
+                                         3, 4};
+    matrix::Matrix<int, 2, 2> matrix2 = {1, 2,
+                                         3, 4};
 
-//     ASSERT_EQ(true, matrix1 == matrix2);
+    ASSERT_EQ(true, matrix1 == matrix2);
+}
 
-//     matrix::Matrix<int, 3, 3> expected{{1, 2},{3, 4}};
-//     EXPECT_EQ(matrix1, expected);
-//     expected = {{1, 2},{3, 4}};
-//     EXPECT_EQ(matrix2, expected);
-// }
+/** Addition */
 
-// /** Addition */
+TEST(MatrixAddition, Simple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 1,  2,
+                                          1,  0};
+    matrix::Matrix<int, 2, 2> matrix2 = { 0,  5,
+                                          3,  4};
 
-// TEST(MatrixAddition, Simple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{1, 2},{1, 0}};
-//     matrix::Matrix<int, 3, 3> matrix2{{0, 5},{3, 4}};
+    matrix::Matrix<int, 2, 2> matrix3 = matrix1 + matrix2;
 
-//     matrix::Matrix<int, 3, 3> matrix3 = matrix1 + matrix2;
+    matrix::Matrix<int, 2, 2> expected = { 1,  7,
+                                           4,  4};
+    EXPECT_EQ(matrix3, expected);
+}
 
-//     matrix::Matrix<int, 3, 3> expected{{1, 2},{1, 0}};
-//     EXPECT_EQ(matrix1, expected);
-//     expected = {{0, 5},{3, 4}};
-//     EXPECT_EQ(matrix2, expected);
+TEST(MatrixAddition, AssignSimple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 6,  2,
+                                         -2,  0};
+    matrix::Matrix<int, 2, 2> matrix2 = {-3,  5,
+                                          1, -3};
 
-//     expected = {{1, 7},{4, 4}};
-//     EXPECT_EQ(matrix3, expected);
-// }
+    matrix1 += matrix2;
 
-// TEST(MatrixAddition, AssignSimple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{6, 2},{-2, 0}};
-//     matrix::Matrix<int, 3, 3> matrix2{{-3, 5},{1, -3}};
+    matrix::Matrix<int, 2, 2> expected = { 3,  7,
+                                          -1, -3};
+    EXPECT_EQ(matrix1, expected);
+}
 
-//     matrix1 += matrix2;
+/** Substraction */
 
-//     matrix::Matrix<int, 3, 3> expected{{-3, 5},{1, -3}};
-//     EXPECT_EQ(matrix2, expected);
+TEST(MatrixSubstraction, Simple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 1,  2,
+                                          1,  0};
+    matrix::Matrix<int, 2, 2> matrix2 = {-6,  2,
+                                          3,  4};
 
-//     expected = {{3, 7},{-1, -3}};
-//     EXPECT_EQ(matrix1, expected);
-// }
+    matrix::Matrix<int, 2, 2> matrix3 = matrix1 - matrix2;
 
-// /** Substraction */
+    matrix::Matrix<int, 2, 2> expected = { 7,  0,
+                                          -2, -4};
+    EXPECT_EQ(matrix3, expected);
+}
 
-// TEST(MatrixSubstraction, Simple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{1, 2},{1, 0}};
-//     matrix::Matrix<int, 3, 3> matrix2{{-6, 2},{3, 4}};
+TEST(MatrixSubstraction, AssignSimple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 1,  2,
+                                          1,  0};
+    matrix::Matrix<int, 2, 2> matrix2 = {-6,  2,
+                                          3,  4};
 
-//     matrix::Matrix<int, 3, 3> matrix3 = matrix1 - matrix2;
+    matrix1 -= matrix2;
 
-//     matrix::Matrix<int, 3, 3> expected{{1, 2},{1, 0}};
-//     EXPECT_EQ(matrix1, expected);
-//     expected = {{-6, 2},{3, 4}};
-//     EXPECT_EQ(matrix2, expected);
+    matrix::Matrix<int, 2, 2> expected = { 7,  0,
+                                          -2, -4};
+    EXPECT_EQ(matrix1, expected);
+}
 
-//     expected = {{7, 0},{-2, -4}};
-//     EXPECT_EQ(matrix3, expected);
-// }
+/** Scalar Multiplication */
 
-// TEST(MatrixSubstraction, AssignSimple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{1, 2},{1, 0}};
-//     matrix::Matrix<int, 3, 3> matrix2{{-6, 2},{3, 4}};
+TEST(MatrixScalarMultiplication, Simple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 1,  2,
+                                          3,  4};
+    int scalar = 2;
 
-//     matrix1 -= matrix2;
+    matrix::Matrix<int, 2, 2> matrix2 = matrix1 * scalar;
 
-//     matrix::Matrix<int, 3, 3> expected{{-6, 2},{3, 4}};
-//     EXPECT_EQ(matrix2, expected);
+    matrix::Matrix<int, 2, 2> expected = { 2,  4,
+                                           6,  8};
+    EXPECT_EQ(matrix2, expected);
+}
 
-//     expected = {{7, 0},{-2, -4}};
-//     EXPECT_EQ(matrix1, expected);
-// }
+TEST(MatrixScalarMultiplication, Reverse)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 4,  2,
+                                         -2,  1};
+    int scalar = 5;
 
-// /** Scalar Multiplication */
+    matrix::Matrix<int, 2, 2> matrix2 = scalar * matrix1;
 
-// TEST(MatrixScalarMultiplication, Simple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{1, 2},{3, 4}};
-//     int scalar = 2;
+    matrix::Matrix<int, 2, 2> expected = { 20,  10,
+                                          -10,   5};
+    EXPECT_EQ(matrix2, expected);
+}
 
-//     matrix::Matrix<int, 3, 3> matrix2 = matrix1 * scalar;
+TEST(MatrixScalarMultiplication, AssignSimple)
+{
+    matrix::Matrix<int, 2, 2> matrix1 = { 4,  6,
+                                          2, -3};
+    int scalar = 3;
 
-//     EXPECT_EQ(scalar, 2);
+    matrix1 *= scalar;
 
-//     matrix::Matrix<int, 3, 3> expected{{2, 4},{6, 8}};
-//     EXPECT_EQ(matrix2, expected);
-// }
+    matrix::Matrix<int, 2, 2> expected = { 12,  18,
+                                            6,  -9};
+    EXPECT_EQ(matrix1, expected);
+}
 
-// TEST(MatrixScalarMultiplication, Reverse)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{4, 2},{-2, 1}};
-//     int scalar = 5;
+/***************************** */
 
-//     matrix::Matrix<int, 3, 3> matrix2 = scalar * matrix1;
-
-//     EXPECT_EQ(scalar, 5);
-
-//     matrix::Matrix<int, 3, 3> expected{{20, 10},{-10, 5}};
-//     EXPECT_EQ(matrix2, expected);
-// }
-
-// TEST(MatrixScalarMultiplication, AssignSimple)
-// {
-//     matrix::Matrix<int, 3, 3> matrix1{{4, 6},{2, -3}};
-//     int scalar = 3;
-
-//     matrix1 *= scalar;
-
-//     EXPECT_EQ(scalar, 3);
-
-//     matrix::Matrix<int, 3, 3> expected{{12, 18},{6, -9}};
-//     EXPECT_EQ(matrix1, expected);
-// }
-
-// /***************************** */
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

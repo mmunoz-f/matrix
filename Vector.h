@@ -41,11 +41,9 @@ public:
     template <size_t O, size_t P>
     Vector(const Matrix<T, O, P>& matrix)
         requires (O * P == N)
+    :   _data(matrix._data)
     {
-        for (size_t i = 0; i < size(); i++)
-        {
-            _data[i] = matrix._data[i];
-        }
+
     }
 
 /***
@@ -65,10 +63,7 @@ public:
     Vector& operator=(const Matrix<T, O, P>& matrix)
         requires (O * P == N)
     {
-        for (size_t i = 0; i < size(); i++)
-        {
-            _data[i] = matrix._data[i];
-        }
+        _data = matrix._data;
 
         return *this;
     }
