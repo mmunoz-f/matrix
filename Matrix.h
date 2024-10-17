@@ -12,18 +12,12 @@ class Vector;
 template<typename T, size_t M, size_t N>
 class Matrix
 {
-
 public:
-
-    struct Shape
-    {
-        static constexpr size_t m = M;
-        static constexpr size_t n = N;
-    };
+    struct Shape;
 
 private:
 
-    static constexpr Shape _shape = Shape();
+    static constexpr Shape _shape = Shape(M, N);
 
     std::array<T, M*N> _data;
 
@@ -445,23 +439,43 @@ public:
 }; // class Matrix
 
 template<typename T, size_t M, size_t N>
-inline std::ostream& operator<<(std::ostream& os, const struct Matrix<T, M, N>::Shape& shape)
+struct Matrix<T, M, N>::Shape
+{
+    size_t m;
+    size_t n;
+
+    // TODO not being defined outside because of type deduction errors, check why and make better
+    friend std::ostream& operator<<(std::ostream& os, const Shape& shape)
+    {
+        os << "(" << shape.m << "x" << shape.n << ")";
+
+        return os;
+    }
+}; // struct Matrix::Shape
+
+/**
+ * TODO check type deduction in templates
+**
+
+template<typename T, size_t M, size_t N>
+std::ostream& operator<<(std::ostream& os, const typename Matrix<T, M, N>::Shape& shape)
 {
     os << "(" << shape.m << "x" << shape.n << ")";
 
     return os;
 }
+*/
 
 template<typename T, size_t M, size_t N>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, M, N>& matrix)
 {
     os << "{ ";
 
-    for (size_t i = 0; i < matrix.shape().m; i++)
+    for (size_t i = 0; i < matrix._shape.m; i++)
     {
         os << "( ";
 
-        for (size_t j = 0; j < matrix.shape().n; j++)
+        for (size_t j = 0; j < matrix._shape.n; j++)
         {
             os << matrix(i, j) << " ";
         }
@@ -471,7 +485,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, M, N>& matrix)
     
     os << "} ";
 
-    os << matrix.shape();
+    os << matrix._shape;
     return os;
 }
 
