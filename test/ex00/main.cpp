@@ -208,15 +208,62 @@ TEST(MatrixScalarMultiplication, Reverse)
 
 TEST(MatrixScalarMultiplication, AssignSimple)
 {
-    matrix::Matrix<int, 2, 2> matrix1 = { 4,  6,
+    matrix::Matrix<int, 2, 2> matrix = { 4,  6,
                                           2, -3};
     int scalar = 3;
 
-    matrix1 *= scalar;
+    matrix *= scalar;
 
     matrix::Matrix<int, 2, 2> expected = { 12,  18,
                                             6,  -9};
-    EXPECT_EQ(matrix1, expected);
+    EXPECT_EQ(matrix, expected);
+}
+
+/***
+ * Conversions
+*/
+
+TEST(Conversions, MatrixToVectorConstructor)
+{
+    matrix::Matrix<int, 2, 2> matrix = { 2, 4,
+                                         3, 5};
+    matrix::Vector<int, 4> vector(matrix);
+
+    matrix::Vector<int, 4> expected = {2, 4, 3, 5};
+    EXPECT_EQ(vector, expected);
+}
+
+TEST(Conversions, MatrixToVectorAssign)
+{
+    matrix::Matrix<int, 2, 2> matrix = { 2, 4,
+                                         3, 5};
+    matrix::Vector<int, 4> vector;
+    vector = matrix;
+
+    matrix::Vector<int, 4> expected = {2, 4, 3, 5};
+    EXPECT_EQ(vector, expected);
+}
+
+TEST(Conversions, VectorToMatrixConstructor)
+{
+    matrix::Vector<int, 6> vector = { 2, 4, 3, 5, 6, 7};
+    matrix::Matrix<int, 3, 2> matrix(vector);
+
+    matrix::Matrix<int, 3, 2> expected = { 2,  4,  3,
+                                           5,  6,  7};
+    EXPECT_EQ(matrix, expected);
+}
+
+TEST(Conversions, VectorToMatrixAssign)
+{
+    matrix::Vector<int, 6> vector = { 2, 4, 3, 5, 6, 7};
+    matrix::Matrix<int, 2, 3> matrix;
+    matrix = vector;
+
+    matrix::Matrix<int, 2, 3> expected = { 2,  4,
+                                           3,  5,
+                                           6,  7};
+    EXPECT_EQ(matrix, expected);
 }
 
 /***************************** */

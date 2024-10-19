@@ -78,7 +78,7 @@ public:
     {
         Vector vector;
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             vector[i] = _data[i] + other[i];
         }
@@ -88,7 +88,7 @@ public:
 
     Vector& operator+=(const Vector& other)
     {
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             _data[i] += other[i];
         }
@@ -100,7 +100,7 @@ public:
     {
         Vector vector;
         
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             vector[i] = _data[i] - other[i];
         }
@@ -110,7 +110,7 @@ public:
 
     Vector& operator-=(const Vector& other)
     {
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             _data[i] -= other[i];
         }
@@ -124,7 +124,7 @@ public:
     {
         Vector vector;
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             vector[i] = _data[i] * scalar;
 
@@ -138,9 +138,12 @@ public:
     template<typename S>
     Vector& operator*=(const S& scalar)
     {
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             _data[i] *= scalar;
+
+            if (_data[i] == 0) // TODO Cause sometimes -0.0f :)
+                _data[i] = 0;
         }
 
         return *this;
@@ -148,7 +151,7 @@ public:
 
     constexpr size_t size() const
     {
-        return _data.size();
+        return N;
     }
 
     inline const T& operator[](size_t pos) const
@@ -165,7 +168,7 @@ public:
     {
         T result = T();
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             result = std::fma(_data[i], other[i], result);
         }
@@ -177,7 +180,7 @@ public:
     {
         T result = T();
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {   
             result += _data[i];
         }
@@ -189,7 +192,7 @@ public:
     {
         float result = 0.f;
 
-        for (size_t i = 0; i < size(); i++)
+        for (size_t i = 0; i < N; i++)
         {
             result = std::fma(_data[i], _data[i], result);
         }
@@ -201,7 +204,7 @@ public:
     {
         T max = abs(_data[0]);
 
-        for (size_t i = 1; i < size(); i++)
+        for (size_t i = 1; i < N; i++)
         {
             max = std::max(max, abs(_data[i]));
         }

@@ -42,7 +42,7 @@ public:
 
     template <size_t O>
     Matrix(const Vector<T, O>& vector)
-        requires ((N / O == M) && (N % O == 0))
+        requires ((O / N == M) && (O % N == 0))
     :   _data(vector._data)
     {
 
@@ -62,9 +62,11 @@ public:
 
     template <size_t O>
     Matrix& operator=(const Vector<T, O>& vector)
-        requires ((N / O == M) && (N % O == 0))
+        requires ((O / N == M) && (O % N == 0))
     {
         _data = vector._data;
+
+        return *this;
     }
 
 /***
@@ -322,22 +324,20 @@ public:
     {
         Matrix matrix;
 
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
-            {
-                matrix(i, j) = (*this)(i, j) + other(i, j);
-            }
+        for (size_t i = 0; i < M * N; i++)
+        {
+            matrix._data[i] = this->_data[i] + other._data[i];
+        }
 
         return matrix;
     }
 
     Matrix& operator+=(const Matrix& other)
     {
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
-            {
-                (*this)(i, j) += other(i, j);
-            }
+        for (size_t i = 0; i < M * N; i++)
+        {
+            this->_data[i] += other._data[i];
+        }
 
         return *this;
     }
@@ -346,22 +346,20 @@ public:
     {
         Matrix matrix;
 
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
-            {
-                matrix(i, j) = (*this)(i, j) - other(i, j);
-            }
+        for (size_t i = 0; i < M * N; i++)
+        {
+            matrix._data[i] = this->_data[i] - other._data[i];
+        }
 
         return matrix;
     }
 
     Matrix& operator-=(const Matrix& other)
     {
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
-            {
-                (*this)(i, j) -= other(i, j);
-            }
+        for (size_t i = 0; i < M * N; i++)
+        {
+            this->_data[i] -= other._data[i];
+       }
 
         return *this;
     }
@@ -370,21 +368,19 @@ public:
     {
         Matrix matrix;
 
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
-            {
-                matrix(i, j) = (*this)(i, j) * scalar;
-            }
+        for (size_t i = 0; i < M * N; i++)
+        {
+            matrix._data[i] = this->_data[i] * scalar;
+        }
 
         return matrix;
     }
 
     Matrix& operator*=(const T& scalar)
     {
-        for (size_t i = 0; i < M; i++)
-            for (size_t j = 0; j < N; j++)
+        for (size_t i = 0; i < M * N; i++)
             {
-                (*this)(i, j) *= scalar;
+                this->_data[i] *= scalar;
             }
 
         return *this;
