@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <cmath>
+
 namespace matrix {
 
 template<typename T>

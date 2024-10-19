@@ -6,6 +6,17 @@
 
 TEST(LinearCombination, Simple)
 {
+    matrix::Vector<int, 3> values = {1, 3, 5};
+    matrix::Vector<int, 3> coefs = {1, 2, 1};
+
+    int result = matrix::linear_combination(values, coefs);
+
+    int expected = 12;
+    EXPECT_EQ(result, expected);
+}
+
+TEST(LinearCombination, VectorSimple)
+{
     matrix::Vector<int, 3> vector1 = {1, 2, 4};
     matrix::Vector<int, 3> vector2 = {3, 5, 7};
 

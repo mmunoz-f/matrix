@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <utility>
+#include <type_traits>
 #include <array>
 #include <ostream>
 #include <cmath>
@@ -20,6 +21,8 @@ class Vector
     std::array<T, N> _data;
 
 public:
+
+// TODO Move Semantics
 
 /***
  * Constructors
@@ -135,8 +138,8 @@ public:
         return vector;
     }
 
-    template<typename S>
-    Vector& operator*=(const S& scalar)
+    template<typename Scalar>
+    Vector& operator*=(const Scalar& scalar)
     {
         for (size_t i = 0; i < N; i++)
         {
@@ -164,13 +167,31 @@ public:
         return _data[pos];
     }
 
-    T dot(const Vector& other) const
+    template<typename U>
+    auto dot(const Vector<U, N>& other) const
+    -> decltype(std::declval<T>() * std::declval<U>())
+        requires (std::is_arithmetic<T>::value)
     {
         T result = T();
 
         for (size_t i = 0; i < N; i++)
         {
             result = std::fma(_data[i], other[i], result);
+        }
+
+        return result;
+    }
+
+    template<typename U>
+    auto dot(const Vector<U, N>& other) const
+    -> decltype(std::declval<T>() * std::declval<U>())
+        requires (!std::is_arithmetic<T>::value)
+    {
+        T result = T();
+
+        for (size_t i = 0; i < N; i++)
+        {
+            result += _data[i] * other[i];
         }
 
         return result;
@@ -253,8 +274,15 @@ Vector<T, N> operator*(const T& scalar, const Vector<T, N>& vector)
     return vector * scalar;
 }
 
-template<typename T, typename S, size_t N, size_t M>
-Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& vectors, const Vector<S, M>& coefs)
+template<typename object, typename scalar, size_t N>
+inline object linear_combination(const Vector<object, N>& elements, const Vector<scalar, N>& coefs)
+{
+    return elements.dot(coefs);
+}
+
+template<typename T, size_t N, typename scalar, size_t M>
+Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& elements, const Vector<scalar, M>& coefs)
+    requires (std::is_arithmetic<T>::value)
 {
     Vector<T, N> result;
     
@@ -262,7 +290,7 @@ Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& vectors, const Ve
     {
         for (size_t j = 0; j < M; j++)
         {
-            result[i] = std::fma(vectors[j][i], coefs[j], result[i]);
+            result[i] = std::fma(elements[j][i], coefs[j], result[i]);
         }
     }
 
