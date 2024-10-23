@@ -22,8 +22,6 @@ class Vector
 
 public:
 
-// TODO Move Semantics
-
 /***
  * Constructors
  */
@@ -41,10 +39,27 @@ public:
 
     }
 
+    Vector(const Vector& other)
+    :   _data(other._data)
+    {
+
+    }
+
+    Vector(Vector&& other)
+    :   _data(std::move(other._data))
+    {
+
+    }
+
     template <size_t O, size_t P>
     Vector(const Matrix<T, O, P>& matrix)
         requires (O * P == N)
     :   _data(matrix._data)
+    {
+
+    }
+
+    ~Vector()
     {
 
     }
@@ -58,6 +73,20 @@ public:
         requires (sizeof...(init) == N)
     {
         _data = {init ...};
+
+        return *this;
+    }
+
+    Vector& operator=(const Vector& other)
+    {
+        _data = other._data;
+
+        return *this;
+    }
+
+    Vector& operator=(Vector&& other)
+    {
+        _data = std::move(other._data);
 
         return *this;
     }

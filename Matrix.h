@@ -40,10 +40,27 @@ public:
 
     }
 
+    Matrix(const Matrix& other)
+    :   _data(other._data)
+    {
+
+    }
+
+    Matrix(Matrix&& other)
+    :   _data(std::move(other._data))
+    {
+
+    }
+
     template <size_t O>
     Matrix(const Vector<T, O>& vector)
         requires ((O / N == M) && (O % N == 0))
     :   _data(vector._data)
+    {
+
+    }
+
+    ~Matrix()
     {
 
     }
@@ -56,6 +73,20 @@ public:
         requires (sizeof...(init) == M*N)
     {
         _data = {init ...};
+
+        return *this;
+    }
+
+    Matrix& operator=(const Matrix& other)
+    {
+        _data = other._data;
+
+        return *this;
+    }
+
+    Matrix& operator=(Matrix&& other)
+    {
+        _data = std::move(other._data);
 
         return *this;
     }
