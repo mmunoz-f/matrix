@@ -3,30 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
-
-struct A {
-
-    int n;
-    A() : n() {}
-    A(int n) : n(n) {}
-
-    A& operator+=(const A& other)
-    {
-        n += other.n;
-
-        return *this;
-    }
-
-    A operator*(const A& other) const
-    {
-        return A(n * other.n);
-    }
-
-    bool operator==(const A& other) const
-    {
-        return n == other.n;
-    }
-};
+#include "../helpers/A.hpp"
 
 TEST(DotProduct, Simple)
 {
