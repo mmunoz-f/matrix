@@ -430,7 +430,7 @@ public:
     }
 
     template<size_t O, size_t P>
-    Matrix<T, M, P> operator*(const Matrix<T, O, P>& other) const // TODO
+    Matrix<T, M, P> operator*(const Matrix<T, O, P>& other) const
         requires (N == O)
     {
         Matrix<T, M, P> result;
