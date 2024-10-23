@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
+#include "../helpers/A.hpp"
 
 TEST(CrossProduct, Unit)
 {
@@ -23,6 +24,17 @@ TEST(CrossProduct, Simple)
     matrix::Vector<int, 3> result = matrix::cross_product(vector1, vector2);
 
     matrix::Vector<int, 3> expt = {-3, 6, -3};
+    EXPECT_EQ(result, expt);
+}
+
+TEST(CrossProduct, SimpleNonArith)
+{
+    matrix::Vector<A, 3> vector1{A(1), A(2), A(3)};
+    matrix::Vector<A, 3> vector2{A(4), A(5), A(6)};
+
+    matrix::Vector<A, 3> result = matrix::cross_product(vector1, vector2);
+
+    matrix::Vector<A, 3> expt = {A(-3), A(6), A(-3)};
     EXPECT_EQ(result, expt);
 }
 

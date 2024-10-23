@@ -15,11 +15,9 @@ struct A {
         return *this;
     }
 
-    A& operator-()
+    A operator-() const
     {
-        n = -n;
-
-        return *this;
+        return A(-n);
     }
 
     A operator*(const A& other) const

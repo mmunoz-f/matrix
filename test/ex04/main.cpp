@@ -8,12 +8,21 @@ TEST(Norm1, Simple)
 {
     matrix::Vector<int, 3> vector = {1, -2, 3};
 
-    int result = vector.norm_1();
+    float result = vector.norm_1();
 
     EXPECT_EQ(result, 2);
 }
 
 TEST(Norm, Simple)
+{
+    matrix::Vector<float, 3> vector = {1.f, -2.f, 3.f};
+
+    float result = vector.norm();
+
+    EXPECT_FLOAT_EQ(result, std::sqrt(14));
+}
+
+TEST(Norm, SimpleInt)
 {
     matrix::Vector<int, 3> vector = {1, -2, 3};
 
@@ -26,7 +35,7 @@ TEST(NormInf, Simple)
 {
     matrix::Vector<int, 3> vector = {3, -5, 4};
 
-    int result = vector.norm_inf();
+    float result = vector.norm_inf();
 
     EXPECT_EQ(result, 5);
 }

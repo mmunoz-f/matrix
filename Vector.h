@@ -226,9 +226,10 @@ public:
         return result;
     }
 
-    T norm_1() const
+    float norm_1() const
+        requires (std::is_arithmetic<T>::value)
     {
-        T result = T();
+        float result = 0.0f;
 
         for (size_t i = 0; i < N; i++)
         {   
@@ -239,8 +240,9 @@ public:
     }
 
     float norm() const
+        requires (std::is_arithmetic<T>::value)
     {
-        float result = 0.f;
+        float result = 0.0f;
 
         for (size_t i = 0; i < N; i++)
         {
@@ -250,13 +252,16 @@ public:
         return std::pow(result, 0.5f);
     }
 
-    T norm_inf() const
-    {
-        T max = abs(_data[0]);
+    // TODO overload norm for complex numbers
 
-        for (size_t i = 1; i < N; i++)
+    float norm_inf() const
+        requires (std::is_arithmetic<T>::value)
+    {
+        float max = 0.0f;
+
+        for (size_t i = 0; i < N; i++)
         {
-            max = std::max(max, abs(_data[i]));
+            max = std::max(max, static_cast<float>(abs(_data[i])));
         }
 
         return max;
@@ -347,6 +352,7 @@ inline T   angle_cos(const Vector<T, N>& u, const Vector<T, N>& v)
 
 template<typename T>
 Vector<T, 3> cross_product(const Vector<T, 3>& u, const Vector<T, 3>& v)
+    requires (std::is_arithmetic<T>::value)
 {
     Vector<T, 3> result({
         -(v[1] * u[2]),
@@ -356,6 +362,22 @@ Vector<T, 3> cross_product(const Vector<T, 3>& u, const Vector<T, 3>& v)
     result[0] = std::fma(u[1], v[2], result[0]);
     result[1] = std::fma(u[2], v[0], result[1]);
     result[2] = std::fma(u[0], v[1], result[2]);
+
+    return result;
+}
+
+template<typename T>
+Vector<T, 3> cross_product(const Vector<T, 3>& u, const Vector<T, 3>& v)
+    requires (!std::is_arithmetic<T>::value)
+{
+    Vector<T, 3> result({
+        -(v[1] * u[2]),
+        -(u[0] * v[2]),
+        -(u[1] * v[0])
+    });
+    result[0] += u[1] * v[2];
+    result[1] += u[2] * v[0];
+    result[2] += u[0] * v[1];
 
     return result;
 }
