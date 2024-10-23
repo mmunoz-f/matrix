@@ -2,44 +2,34 @@
 
 #include <gtest/gtest.h>
 
-#include "../../matrix.h"
-
-#define TYPE int
-
-#define MATRIX matrix::Matrix<TYPE>
+#include "../../matrix.h" 
 
 TEST(MatrixTrace, Identity)
 {
-    MATRIX matrix{{1, 0}, {0, 1}};
+    matrix::Matrix<int, 2, 2> matrix = {1, 0,
+                                        0, 1};
 
-    TYPE result = matrix.trace();
-
-    EXPECT_EQ(matrix, MATRIX({{1, 0}, {0, 1}}));
-
+    int result = matrix.trace();
     EXPECT_EQ(result, 2);
 }
 
 TEST(MatrixTrace, Simple)
 {
-    MATRIX matrix{{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}};
+    matrix::Matrix<int, 3, 3> matrix = { 2, -5,  0,
+                                         4,  3,  7,
+                                        -2,  3,  4};
 
-    TYPE result = matrix.trace();
-
-    EXPECT_EQ(matrix, MATRIX({{2, -5, 0}, {4, 3, 7}, {-2, 3, 4}}));
-
+    int result = matrix.trace();
     EXPECT_EQ(result, 9);
 }
 
-TEST(MatrixTrace, NotSquare)
-{
-    MATRIX matrix{{1, 0, 1}, {0, 1, 1}};
+// TEST(MatrixTrace, NotSquare) // Should not compile
+// {
+//     matrix::Matrix<int, 2, 3> matrix = {1, 0, 1,
+//                                         0, 1, 1};
 
-    EXPECT_THROW({
-        matrix.trace();
-    }, std::runtime_error);
-
-    EXPECT_EQ(matrix, MATRIX({{1, 0, 1}, {0, 1, 1}}));
-}
+//     int result = matrix.trace();
+// }
 
 /***************************** */
 

@@ -176,7 +176,7 @@ public:
 
         for (size_t i = 0; i < M; i++)
         {
-            result += _data(i, i);
+            result += (*this)(i, i);
         }
 
         return result;
