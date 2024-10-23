@@ -167,8 +167,8 @@ public:
         return vector;
     }
 
-    template<typename Scalar>
-    Vector& operator*=(const Scalar& scalar)
+    template<typename S>
+    Vector& operator*=(const S& scalar)
     {
         for (size_t i = 0; i < N; i++)
         {
@@ -283,6 +283,12 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Vector<t, n>& vector);
 }; // Class Vector
 
+template<typename T>
+struct is_vector : std::false_type {};
+
+template<typename T, size_t N>
+struct is_vector<Vector<T, N>> : std::true_type {};
+
 template<typename T, size_t N>
 std::ostream& operator<<(std::ostream& os, const Vector<T, N>& vector)
 {
@@ -297,14 +303,15 @@ std::ostream& operator<<(std::ostream& os, const Vector<T, N>& vector)
     return os;
 }
 
-template<typename T, size_t N>
-Vector<T, N> operator*(const T& scalar, const Vector<T, N>& vector)
+template<typename T, size_t N, typename S>
+Vector<T, N> operator*(const S& scalar, const Vector<T, N>& vector)
 {
     return vector * scalar;
 }
 
 template<typename object, typename scalar, size_t N>
 inline object linear_combination(const Vector<object, N>& elements, const Vector<scalar, N>& coefs)
+    requires (!matrix::is_vector<object>::value || !std::is_arithmetic<object>::value)
 {
     return elements.dot(coefs);
 }
