@@ -4,6 +4,30 @@
 
 #include "../../matrix.h" 
 
+struct A {
+
+    int n;
+    A() : n() {}
+    A(int n) : n(n) {}
+
+    A& operator+=(const A& other)
+    {
+        n += other.n;
+
+        return *this;
+    }
+
+    A operator*(const A& other) const
+    {
+        return A(n * other.n);
+    }
+
+    bool operator==(const A& other) const
+    {
+        return n == other.n;
+    }
+};
+
 TEST(LinearCombination, Simple)
 {
     matrix::Vector<int, 3> values = {1, 3, 5};
@@ -13,6 +37,15 @@ TEST(LinearCombination, Simple)
 
     int expected = 12;
     EXPECT_EQ(result, expected);
+}
+
+TEST(LinearCombination, SimpleNonArith)
+{
+     matrix::Vector<A, 2> values = {A(3), A(2)};
+    matrix::Vector<int, 2> coefs = {4, 5};
+
+    A result = matrix::linear_combination(values, coefs);
+    EXPECT_EQ(result, A(22));
 }
 
 TEST(LinearCombination, VectorSimple)

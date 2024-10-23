@@ -43,7 +43,7 @@ TEST(DotProduct, NonArith)
     matrix::Vector<A, 2> vector2 = {A(4), A(3)};
 
     A result = vector1.dot(vector2);
-    EXPECT_EQ(result, 10);
+    EXPECT_EQ(result, A(10));
 }
 
 /***************************** */
