@@ -3,76 +3,73 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
-
-#define TYPE float
-
-#define MATRIX matrix::Matrix<TYPE>
+#include "../test_utils.hpp"
 
 TEST(MatrixRowEchelonForm, Identity)
 {
-    MATRIX matrix{{1, 0}, {0, 1}};
+    matrix::Matrix<float, 2, 2> matrix = {1, 0,
+	                                  0, 1};
 
-    MATRIX result = matrix.row_echelon();
+    matrix::Matrix<float, 2, 2> result = matrix.row_echelon();
 
-    EXPECT_EQ(matrix, MATRIX({{1, 0}, {0, 1}}));
-
-    EXPECT_EQ(result, MATRIX({{1, 0}, {0, 1}}));
+    matrix::Matrix<float, 2, 2> expect = {1, 0,
+	                                  0, 1};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixRowEchelonForm, Simple)
 {
-    MATRIX matrix{{1, 2}, {3, 4}};
+    matrix::Matrix<float, 2, 2> matrix = {1, 2,
+	                                  3, 4};
 
-    MATRIX result = matrix.row_echelon();
+    matrix::Matrix<float, 2, 2> result = matrix.row_echelon();
 
-    EXPECT_EQ(matrix, MATRIX({{1, 2}, {3, 4}}));
-
-    EXPECT_EQ(result, MATRIX({{1, 0}, {0, 1}}));
+    matrix::Matrix<float, 2, 2> expect = {1, 0,
+                                          0, 1};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixRowEchelonForm, Simple1)
 {
-    MATRIX matrix{{1, 2}, {2, 4}};
+    matrix::Matrix<float, 2, 2> matrix = {1, 2,
+	                                  2, 4};
 
-    MATRIX result = matrix.row_echelon();
+    matrix::Matrix<float, 2, 2> result = matrix.row_echelon();
 
-    EXPECT_EQ(matrix, MATRIX({{1, 2}, {2, 4}}));
 
-    EXPECT_EQ(result, MATRIX({{1, 2}, {0, 0}}));
+    matrix::Matrix<float, 2, 2> expect = {1, 2,
+                                          0, 0};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixRowEchelonForm, ZeroMidRow)
 {
-    MATRIX matrix{{8, 5}, {0, 0}, {3, 5,}, {7, 1}};
+    matrix::Matrix<float, 4, 2> matrix = {8, 5,
+	                                  0, 0,
+					  3, 5,
+					  7, 1};
 
-    MATRIX result = matrix.row_echelon();
+    matrix::Matrix<float, 4, 2> result = matrix.row_echelon();
 
-    EXPECT_EQ(matrix, MATRIX({{8, 5}, {0, 0}, {3, 5}, {7, 1}}));
-
-    EXPECT_EQ(result, MATRIX({{1, 0}, {0, 1}, {0, 0}, {0, 0}}));
-}
-
-void expect_matrix_float_eq(const MATRIX& result, const MATRIX& expected)
-{
-    if (result.shape() != expected.shape())
-        FAIL();
-
-    for (size_t i = 0; i < result.shape().first; i++)
-        for (size_t j = 0; j < result.shape().second; j++)
-        {
-            EXPECT_FLOAT_EQ(result(i, j), expected(i, j));
-        }
+    matrix::Matrix<float, 4, 2> expect = {1, 0,
+                                          0, 1,
+                                          0, 0,
+                                          0, 0};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixRowEchelonForm, Complex)
 {
-    MATRIX matrix{{8, 5, -2, 4, 28}, {4, 2.5, 20, 4, -4}, {8, 5, 1, 4, 17}};
+    matrix::Matrix<float, 3, 5> matrix = {8, 5, -2, 4, 28,
+	                                  4, 2.5, 20, 4, -4,
+					  8, 5, 1, 4, 17};
 
-    MATRIX result = matrix.row_echelon();
+    matrix::Matrix<float, 3, 5> result = matrix.row_echelon();
 
-    EXPECT_EQ(matrix, MATRIX({{8, 5, -2, 4, 28}, {4, 2.5, 20, 4, -4}, {8, 5, 1, 4, 17}}));
-
-    expect_matrix_float_eq(result, MATRIX({{1, 0.625, 0, 0, -12.1666667}, {0, 0, 1, 0, -3.6666667}, {0, 0, 0, 1, 29.5}}));
+    matrix::Matrix<float, 3, 5> expect = {1, 0.625, 0, 0, -12.1666667,
+	                                  0, 0, 1, 0, -3.6666667,
+				          0, 0, 0, 1, 29.5};
+    expect_matrix_float_eq(result, expect);
 }
 
 /***************************** */

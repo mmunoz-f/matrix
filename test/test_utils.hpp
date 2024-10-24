@@ -2,6 +2,18 @@
 
 #include <ostream>
 
+template<size_t M, size_t N>
+void expect_matrix_float_eq(const matrix::Matrix<float, M, N>& result, const matrix::Matrix<float, M, N>& expect)
+{
+	for (size_t i = 0; i < M; i++)
+	{
+		for (size_t j = 0; j < N; j++)
+		{
+			EXPECT_FLOAT_EQ(result(i, j), expect(i, j));
+		}
+	}
+}
+
 struct A {
 
     int n;

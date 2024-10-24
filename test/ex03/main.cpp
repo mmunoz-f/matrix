@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
-#include "../helpers/A.hpp"
+#include "../test_utils.hpp"
 
 TEST(DotProduct, Simple)
 {
