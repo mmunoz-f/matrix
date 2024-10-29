@@ -238,10 +238,8 @@ public:
 
             for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
             {
-                if (j == i)
-                    continue;
-                change_row(j, row(j) - (*this)(j, pivot) * row(i));
-                (*this)(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
+                if (j != i)
+                    change_row(j, row(j) - (row(i)) / (*this)(i, pivot));
             }
         }
     }
@@ -392,7 +390,7 @@ public:
         for (size_t i = 0; i < M * N; i++)
         {
             this->_data[i] -= other._data[i];
-       }
+        }
 
         return *this;
     }
@@ -412,9 +410,31 @@ public:
     Matrix& operator*=(const T& scalar)
     {
         for (size_t i = 0; i < M * N; i++)
-            {
-                this->_data[i] *= scalar;
-            }
+        {
+            this->_data[i] *= scalar;
+        }
+
+        return *this;
+    }
+
+    Matrix operator/(const T& scalar) const
+    {
+        Matrix matrix;
+
+        for (size_t i = 0; i < M * N; i++)
+        {
+            matrix._data[i] = this->_data[i] / scalar;
+        }
+
+        return matrix;
+    }
+
+    Matrix& operator/=(const T& scalar)
+    {
+        for (size_t i = 0; i < M * N; i++)
+        {
+            this->_data[i] /= scalar;
+        }
 
         return *this;
     }

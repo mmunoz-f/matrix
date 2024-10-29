@@ -150,32 +150,45 @@ public:
         return *this;
     }
 
-    template<typename S>
-    auto operator*(const S& scalar) const
-    -> Vector<decltype(std::declval<T>() * std::declval<S>()), N>
+    Vector operator*(const T& scalar) const
     {
         Vector vector;
 
         for (size_t i = 0; i < N; i++)
         {
             vector[i] = _data[i] * scalar;
-
-            if (vector[i] == 0) // TODO Cause sometimes -0.0f :)
-                vector[i] = 0;
         }
 
         return vector;
     }
 
-    template<typename S>
-    Vector& operator*=(const S& scalar)
+    Vector& operator*=(const T& scalar)
     {
         for (size_t i = 0; i < N; i++)
         {
             _data[i] *= scalar;
+        }
 
-            if (_data[i] == 0) // TODO Cause sometimes -0.0f :)
-                _data[i] = 0;
+        return *this;
+    }
+
+    Vector operator/(const T& scalar) const
+    {
+        Vector vector;
+
+        for (size_t i = 0; i < N; i++)
+        {
+            vector[i] = _data[i] / scalar;
+        }
+    
+        return vector;
+    }
+
+    Vector& operator/=(const T& scalar)
+    {
+        for (size_t i = 0; i < N; i++)
+        {
+            _data[i] /= scalar;
         }
 
         return *this;

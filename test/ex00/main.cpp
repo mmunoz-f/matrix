@@ -95,10 +95,32 @@ TEST(VectorScalarMultiplication, AssignSimple)
 
     vector1 *= scalar;
 
-    EXPECT_EQ(scalar, 3);
-
     matrix::Vector<int, 3> expt = {12, 18, 30};
     EXPECT_EQ(vector1, expt);
+}
+
+/** Scalar Division */
+
+TEST(VectorScalarDivision, Simple)
+{
+    matrix::Vector<int, 3> vector = {3, 9, 6};
+    int scalar = 3;
+
+    matrix::Vector<int, 3> result = vector / scalar;
+
+    matrix::Vector<int, 3> expect = {1, 3, 2};
+    EXPECT_EQ(result, expect);
+}
+
+TEST(VectorScalarDivision, AssignSimple)
+{
+    matrix::Vector<int, 2> vector = {-4, 8};
+    int scalar = 2;
+
+    vector /= scalar;
+
+    matrix::Vector<int, 2> expect = {-2, 4};
+    EXPECT_EQ(vector, expect);
 }
 
 
@@ -217,6 +239,32 @@ TEST(MatrixScalarMultiplication, AssignSimple)
     matrix::Matrix<int, 2, 2> expected = { 12,  18,
                                             6,  -9};
     EXPECT_EQ(matrix, expected);
+}
+
+/** Scalar Division */
+
+TEST(MatrixScalarDivision, Simple)
+{
+    matrix::Matrix<int, 2, 2> matrix = {2, 4,
+                                        8, 10};
+    int scalar = 2;
+
+    matrix::Matrix<int, 2, 2> result = matrix / scalar;
+
+    matrix::Matrix<int, 2, 2> expect = {1, 2,
+                                        4, 5};
+    EXPECT_EQ(result, expect);
+}
+
+TEST(MatrixScalarDivision, AssignSimple)
+{
+    matrix::Matrix<int, 1, 2> matrix = {6, 21};
+    int scalar = 3;
+
+    matrix /= scalar;
+
+    matrix::Matrix<int, 1, 2> expect = {2, 7};
+    EXPECT_EQ(matrix, expect);
 }
 
 /***
