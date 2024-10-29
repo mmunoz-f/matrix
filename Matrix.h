@@ -204,12 +204,10 @@ private:
         change_row(b, tmp);
     }
 
-    std::pair<bool, std::pair<size_t, size_t> > move_up_pivot(size_t row_index, size_t pivot)
+    std::pair<bool, std::pair<size_t, size_t> > push_down_zeros(size_t row_index, const size_t pivot)
     {
-        const T zero_val = T();
-
         for (size_t i = row_index + 1; i < M; i++)
-            if ((*this)(i, pivot) != zero_val)
+            if ((*this)(i, pivot) != 0)
             {
                 swap_row(row_index, i);
                 return std::pair(true, std::pair(row_index, i));
@@ -217,37 +215,41 @@ private:
         return std::pair(false, std::pair(0, 0));
     }
 
-public:
-    Matrix row_echelon() const
+    T   make_pivot_one(const size_t row_index, const size_t pivot)
     {
-        const T zero_val = T();
-        Matrix result((*this));
+        if ((*this)(row_index, pivot) == 1)
+            return 1;
 
+        T div = (*this)(row_index, pivot);
+        
+        change_row(row_index, row(row_index) / div);
+        return div;
+    }
+
+
+public:
+
+    void to_row_echelon()
+    {
         for (size_t i = 0, pivot = 0; i < M && pivot < N; i++, pivot++)
         {
-            if (result(i, pivot) == zero_val)
-                result.move_up_pivot(i, pivot);
-            if (result(i, pivot) == zero_val)
-            {
-                i--;
-                continue;
-            }
-
-            if (result(i, pivot) != 1)
-            {
-                result.change_row(i, result.row(i) * (1.f/result(i, pivot))); // Divide row by its first not null member
-                result(i, pivot) = 1; // TODO a better way? to ensure pivot is 1
-            }
+            push_down_zeros(i, pivot);
+            make_pivot_one(i, pivot);
 
             for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
             {
                 if (j == i)
                     continue;
-                result.change_row(j, result.row(j) - result(j, pivot) * result.row(i));
-                result(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
+                change_row(j, row(j) - (*this)(j, pivot) * row(i));
+                (*this)(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
             }
         }
+    }
 
+    Matrix row_echelon() const
+    {
+        Matrix result = Matrix(*this);
+        result.to_row_echelon();
         return result;
     }
 
