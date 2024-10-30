@@ -242,10 +242,8 @@ public:
             {
                 make_pivot_one(i, pivot);
                 for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
-                {
                     if (j != i)
                         change_row(j, row(j) - (row(i)) * (*this)(j, pivot));
-                }
                 i++;
             }
 
@@ -263,33 +261,27 @@ public:
     T determinant() const
         requires (M == N)
     {
-        const T zero_val = T();
         T result = 1;
         Matrix row_echelon_form((*this));
 
-        for (size_t i = 0, pivot = 0; i < M && pivot < N; i++, pivot++)
+        size_t i = 0, pivot = 0;
+        while (i < M && pivot < N)
         {
-            if (row_echelon_form(i, pivot) == zero_val)
-                if (row_echelon_form.move_up_pivot(i, pivot).first)
-                    result *= -1; // Change sign if rows are changed; matrices properties duh
+            if (row_echelon_form.push_down_zeros(i, pivot).first)
+                result *= -1; // Change sign if rows are changed, cause math
 
-            if (row_echelon_form(i, pivot) == zero_val)
+            if ((*this)(i, pivot) != 0)
             {
-                i--;
-                continue;
+                for (size_t j = i + 1; j < M; j++) // Substract lines by pivot line * first not null elm of current line
+                    row_echelon_form.change_row(j, row_echelon_form.row(j) - row_echelon_form.row(i) * (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)));
+                i++;
             }
 
-            for (size_t j = i + 1; j < M; j++) // Substract lines by pivot line * first not null elm of current line
-            {
-                row_echelon_form.change_row(j, row_echelon_form.row(j) - (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)) * row_echelon_form.row(i));
-                row_echelon_form(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
-            }
+            pivot++;
         }
 
         for (size_t i = 0; i < M; i++)
-        {
             result *= row_echelon_form(i, i);
-        }
 
         return result;
     }
@@ -299,9 +291,7 @@ public:
         Matrix matrix;
 
         for (size_t i = 0; i < M; i++)
-        {
             matrix(i, i) = 1;
-        }
 
         return matrix;
     }
