@@ -204,14 +204,17 @@ private:
         change_row(b, tmp);
     }
 
-    std::pair<bool, std::pair<size_t, size_t> > push_down_zeros(size_t row_index, const size_t pivot)
+    std::pair<bool, std::pair<size_t, size_t> > push_down_zeros(const size_t row_index, const size_t pivot)
     {
-        for (size_t i = row_index + 1; i < M; i++)
-            if ((*this)(i, pivot) != 0)
-            {
-                swap_row(row_index, i);
-                return std::pair(true, std::pair(row_index, i));
-            }
+        if ((*this)(row_index, pivot) == 0)
+        {
+            for (size_t i = row_index + 1; i < M; i++)
+                if ((*this)(i, pivot) != 0)
+                {
+                    swap_row(row_index, i);
+                    return std::pair(true, std::pair(row_index, i));
+                }
+        }
         return std::pair(false, std::pair(0, 0));
     }
 
@@ -226,21 +229,27 @@ private:
         return div;
     }
 
-
 public:
 
     void to_row_echelon()
     {
-        for (size_t i = 0, pivot = 0; i < M && pivot < N; i++, pivot++)
+        size_t pivot = 0, i = 0;
+        while (i < M && pivot < N)
         {
             push_down_zeros(i, pivot);
-            make_pivot_one(i, pivot);
-
-            for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
+            
+            if ((*this)(i, pivot) != 0)
             {
-                if (j != i)
-                    change_row(j, row(j) - (row(i)) / (*this)(i, pivot));
+                make_pivot_one(i, pivot);
+                for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
+                {
+                    if (j != i)
+                        change_row(j, row(j) - (row(i)) * (*this)(j, pivot));
+                }
+                i++;
             }
+
+            pivot++;
         }
     }
 
