@@ -262,18 +262,18 @@ public:
         requires (M == N)
     {
         T result = 1;
-        Matrix row_echelon_form((*this));
+        Matrix copy(*this);
 
         size_t i = 0, pivot = 0;
         while (i < M && pivot < N)
         {
-            if (row_echelon_form.push_down_zeros(i, pivot).first)
+            if (copy.push_down_zeros(i, pivot).first)
                 result *= -1; // Change sign if rows are changed, cause math
 
             if ((*this)(i, pivot) != 0)
             {
                 for (size_t j = i + 1; j < M; j++) // Substract lines by pivot line * first not null elm of current line
-                    row_echelon_form.change_row(j, row_echelon_form.row(j) - row_echelon_form.row(i) * (row_echelon_form(j, pivot) / row_echelon_form(i, pivot)));
+                    copy.change_row(j, copy.row(j) - copy.row(i) * (copy(j, pivot) / copy(i, pivot)));
                 i++;
             }
 
@@ -281,7 +281,7 @@ public:
         }
 
         for (size_t i = 0; i < M; i++)
-            result *= row_echelon_form(i, i);
+            result *= copy(i, i);
 
         return result;
     }
@@ -299,46 +299,35 @@ public:
     Matrix inverse() const
         requires (M == N)
     {
-        const T zero_val = T();
-        Matrix tmp((*this));
-        const Matrix identity = Matrix::identity(M);
-        Matrix inverse(identity);
+        Matrix copy(*this);
+        Matrix inverse(Matrix::identity());
 
-        for (size_t i = 0, pivot = 0; i < M && pivot < N; i++, pivot++)
+        size_t i = 0, pivot = 0;
+        while (i < M && pivot < N)
         {
-            if (tmp(i, pivot) == zero_val)
-            {
-                auto swap_res = tmp.move_up_pivot(i, pivot);
-                if (swap_res.first)
-                    inverse.swap_row(swap_res.second.first, swap_res.second.second);
-            }
+            auto swap_res = copy.push_down_zeros(i, pivot);
+            if (swap_res.first)
+                inverse.swap_row(swap_res.second.first, swap_res.second.second);
 
-            if (tmp(i, pivot) == zero_val)
+            if (copy(i, pivot) != 0)
             {
-                i--;
-                continue;
-            }
+                T val = copy.make_pivot_one(i, pivot);
+                if (val != 1)
+                    inverse.change_row(i, inverse.row(i) / val);
 
-            if (tmp(i, pivot) != 1)
-            {
-                T val = 1.f/tmp(i, pivot);
-                tmp.change_row(i, tmp.row(i) * val); // Divide row by its first not null member
-                inverse.change_row(i, inverse.row(i) * val);
-                tmp(i, pivot) = 1; // TODO a better way? to ensure pivot is 1
+                for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
+                    if (j != i)
+                    {
+                        T val = copy(j, pivot);
+                        copy.change_row(j, copy.row(j) - val * copy.row(i));
+                        inverse.change_row(j, inverse.row(j) - val * inverse.row(i));
+                    }
+                i++;
             }
-
-            for (size_t j = 0; j < M; j++) // Substract lines by pivot line * first not null elm of current line
-            {
-                if (j == i)
-                    continue;
-                T val = tmp(j, pivot);
-                tmp.change_row(j, tmp.row(j) - val * tmp.row(i));
-                inverse.change_row(j, inverse.row(j) - val * inverse.row(i));
-                tmp(j, pivot) = 0; // TODO a better way? to ensure values above or below pivot are 0
-            }
+            pivot++;
         }
 
-        if (tmp != identity)
+        if (copy != Matrix::identity())
             throw std::runtime_error(
                 "inverse: matrix is singular"
             );

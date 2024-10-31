@@ -3,79 +3,65 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
-
-#define TYPE float
-
-#define MATRIX matrix::Matrix<TYPE>
+#include "../test_utils.hpp"
 
 TEST(MatrixInverse, Identity)
 {
-    MATRIX matrix{{1, 0}, {0, 1}};
+    matrix::Matrix<float, 2, 2> matrix = {1.f, 0.f,
+                                          0.f, 1.f};
 
-    MATRIX result = matrix.inverse();
+    matrix::Matrix<float, 2, 2> result = matrix.inverse();
 
-    EXPECT_EQ(matrix, MATRIX({{1, 0}, {0, 1}}));
-
-    EXPECT_EQ(result, MATRIX({{1, 0}, {0, 1}}));
+    matrix::Matrix<float, 2, 2> expect = {1.f, 0.f,
+                                          0.f, 1.f};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixInverse, Diagonal)
 {
-    MATRIX matrix{{2, 0, 0}, {0, 2, 0}, {0, 0, 2}};
+    matrix::Matrix<float, 3, 3> matrix = {2.f, 0.f, 0.f,
+                                          0.f, 2.f, 0.f,
+                                          0.f, 0.f, 2.f};
 
-    MATRIX result = matrix.inverse();
+    matrix::Matrix<float, 3, 3> result = matrix.inverse();
 
-    EXPECT_EQ(matrix, MATRIX({{2, 0, 0}, {0, 2, 0}, {0, 0, 2}}));
-
-    EXPECT_EQ(result, MATRIX({{0.5, 0, 0}, {0, 0.5, 0}, {0, 0, 0.5}}));
-}
-
-void expect_matrix_float_eq(const MATRIX& result, const MATRIX& expected)
-{
-    if (result.shape() != expected.shape())
-        FAIL();
-
-    for (size_t i = 0; i < result.shape().first; i++)
-        for (size_t j = 0; j < result.shape().second; j++)
-        {
-            EXPECT_FLOAT_EQ(result(i, j), expected(i, j));
-        }
+    matrix::Matrix<float, 3, 3> expect = {0.5f, 0.f, 0.f, 
+                                          0.f, 0.5f, 0.f,
+                                          0.f, 0.f, 0.5f};
+    EXPECT_EQ(result, expect);
 }
 
 TEST(MatrixInverse, Simple)
 {
-    MATRIX matrix{{8, 5, -2}, {4, 7, 20}, {7, 6, 1}};
+    matrix::Matrix<float, 3, 3> matrix = {8.f, 5.f, -2.f,
+                                          4.f, 7.f, 20.f,
+                                          7.f, 6.f, 1.f};
 
-    MATRIX result = matrix.inverse();
+    matrix::Matrix<float, 3, 3> result = matrix.inverse();
 
-    EXPECT_EQ(matrix, MATRIX({{8, 5, -2}, {4, 7, 20}, {7, 6, 1}}));
-
-    expect_matrix_float_eq(result, MATRIX({{ 0.649425287,  0.097701149, -0.655172414},
-                                           {-0.781609195, -0.126436782,  0.965517241},
-                                           { 0.143678161,  0.074712644, -0.206896552}}));
+    matrix::Matrix<float, 3, 3> expect = { 0.649425287f,  0.097701149f, -0.655172414f,
+                                          -0.781609195f, -0.126436782f,  0.965517241f,
+                                           0.143678161f,  0.074712644f, -0.206896552f};
+    expect_matrix_float_eq(result, expect);
 }
 
 TEST(MatrixInverse, Singular)
 {
-    MATRIX matrix{{3, 6}, {2, 4}};
+    matrix::Matrix<float, 2, 2> matrix = {3.f, 6.f,
+                                          2.f, 4.f};
 
     EXPECT_THROW({
         matrix.inverse();
     }, std::runtime_error);
-
-    EXPECT_EQ(matrix, MATRIX({{3, 6}, {2, 4}}));
 }
 
-TEST(MatrixInverse, NotSquare)
-{
-    MATRIX matrix{{1, 0, 1}, {0, 1, 1}};
-
-    EXPECT_THROW({
-        matrix.inverse();
-    }, std::runtime_error);
-
-    EXPECT_EQ(matrix, MATRIX({{1, 0, 1}, {0, 1, 1}}));
-}
+// TEST(MatrixInverse, NotSquare) // This wont compile
+// {
+//     matrix::Matrix<float, 2, 3> matrix = {1.f, 0.f, 1.f,
+//                                           0.f, 1.f, 1.f};
+//
+//     matrix.inverse();
+// }
 
 /***************************** */
 
