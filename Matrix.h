@@ -28,7 +28,7 @@ public:
  */
 
     Matrix()
-    : _data()
+    :   _data()
     {
 
     }
