@@ -1,4 +1,4 @@
-NAME	= ex12.out
+NAME	= ex13.out
 
 CXX			= g++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++20 -g -pthread -I../googletest/googletest/include

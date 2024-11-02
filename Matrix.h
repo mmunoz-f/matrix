@@ -286,7 +286,8 @@ public:
         return result;
     }
 
-    static Matrix identity() // TODO Can i build it in compile time, make it constexpr
+private:
+    static constexpr Matrix generate_identity()
     {
         Matrix matrix;
 
@@ -294,6 +295,14 @@ public:
             matrix(i, i) = 1;
 
         return matrix;
+    }
+
+public:
+    static Matrix identity()
+    {
+        static Matrix identity = generate_identity();
+
+        return identity;
     }
 
     Matrix inverse() const
@@ -333,6 +342,27 @@ public:
             );
 
         return inverse;
+    }
+
+    size_t rank() const
+    {
+        const Matrix echelon_form = row_echelon();
+
+        size_t rank = 0;
+        for (; rank < M; rank++)
+        {
+            Vector<T, N> _row = echelon_form.row(rank);
+            for (size_t i = 0; i < N; i++)
+            {
+                if (_row[i] != 0)
+                    break;
+
+                if (i == N - 1)
+                    return rank;
+            }
+        }
+
+        return rank;
     }
 
 /***
