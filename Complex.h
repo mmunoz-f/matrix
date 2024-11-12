@@ -7,10 +7,9 @@ namespace matrix {
 template<typename T>
 class Complex {
 
+public:
     T real;
     T imaginary;
-
-public:
 
 /***
  * Constructors
@@ -18,14 +17,14 @@ public:
 
     Complex()
     :   real(),
-        imaginary(),
+        imaginary()
     {
 
     }
 
     Complex(const T& real, const T& imaginary)
     :   real(real),
-        imaginary(imaginary),
+        imaginary(imaginary)
     {
         
     }
@@ -101,31 +100,34 @@ public:
 
     Complex operator*(const Complex& other) const
     {
-        return Complex(real * other.real - imaginary * other.imaginary, real * imaginary);
+        return Complex(real * other.real - imaginary * other.imaginary, real * other.imaginary + other.real * imaginary);
     }
 
     Complex& operator*=(const Complex& other)
     {
+        const T tmp = real;
+
         real = real * other.real - imaginary * other.imaginary;
-        imaginary *= real;
+        imaginary = tmp * other.imaginary + other.real * imaginary;
 
         return *this;
     }
 
     Complex operator/(const Complex& other) const
     {
-        const T div = imaginary * imaginary + other.imaginary;
+        const T div = other.real * other.real + other.imaginary * other.imaginary;
 
         return Complex((real * other.real + imaginary * other.imaginary)/div,
-                       (imaginary * other.real + real * other.imaginary)/div);
+                       (imaginary * other.real - real * other.imaginary)/div);
     }
 
     Complex& operator/=(const Complex& other)
     {
-        const T div(imaginary * imaginary + other.imaginary);
+        const T tmp = real;
+        const T div = other.real * other.real + other.imaginary * other.imaginary;
 
         real = (real * other.real + imaginary * other.imaginary)/div;
-        imaginary = (imaginary * other.real + real * other.imaginary)/div;
+        imaginary = (imaginary * other.real - tmp * other.imaginary)/div;
 
         return *this;
     }
@@ -150,7 +152,7 @@ public:
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const Complex<T>& complex)
 {
-    return os << real << ' + ' << imaginary << 'j';
+    return os << complex.real << " + " << complex.imaginary << 'j';
 }
 
 } // namespace matrix

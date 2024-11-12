@@ -14,6 +14,24 @@ void expect_matrix_float_eq(const matrix::Matrix<float, M, N>& result, const mat
 	}
 }
 
+void expect_complex_float_eq(const matrix::Complex<float>& result, const matrix::Complex<float>& expect)
+{
+    EXPECT_FLOAT_EQ(result.real, expect.real);
+    EXPECT_FLOAT_EQ(result.imaginary, expect.imaginary);
+}
+
+template<size_t M, size_t N>
+void expect_matrix_complex_float_eq(const matrix::Matrix<matrix::Complex<float>, M, N>& result, const matrix::Matrix<matrix::Complex<float>, M, N>& expect)
+{
+	for (size_t i = 0; i < M; i++)
+	{
+		for (size_t j = 0; j < N; j++)
+		{
+			expect_complex_float_eq(result(i, j), expect(i, j));
+		}
+	}
+}
+
 struct A {
 
     int n;
