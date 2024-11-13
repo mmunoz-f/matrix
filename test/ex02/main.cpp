@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../../matrix.h" 
+#include "../../matrix.h"
 
 /**
  * Scalars
@@ -138,87 +138,75 @@ TEST(VectorLinearInterpolation, MakeItLess)
     EXPECT_EQ(vector, expt);
 }
 
-// /**
-//  * Matrix
-//  */
+/**
+ * Matrix
+ */
 
-// TEST(MatrixLinearInterpolation, FullFirst)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
+TEST(MatrixLinearInterpolation, FullFirst)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, 0.f);
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 0.f);
 
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
+    matrix::Matrix<float, 2, 1> expect = {2.f, 3.f};
+    EXPECT_EQ(matrix, expect);
+}
 
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{2, 3}}));
-// }
+TEST(MatrixLinearInterpolation, FullSecond)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-// TEST(MatrixLinearInterpolation, FullSecond)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 1.f);
 
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, 1.f);
+    matrix::Matrix<float, 2, 1> expect = {4.f, 7.f};
+    EXPECT_EQ(matrix, expect);
+}
 
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
+TEST(MatrixLinearInterpolation, Simple)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{4, 7}}));
-// }
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 0.3f);
 
-// TEST(MatrixLinearInterpolation, Simple)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
+    matrix::Matrix<float, 2, 1> expect = {2.6f, 4.2f};
+    EXPECT_EQ(matrix, expect);
+}
 
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, 0.3f);
+TEST(MatrixLinearInterpolation, SimpleOposite)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 0.7f);
 
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{2.6f, 4.2f}}));
-// }
+    matrix::Matrix<float, 2, 1> expect = {3.4f, 5.8f};
+    EXPECT_EQ(matrix, expect);
+}
 
-// TEST(MatrixLinearInterpolation, SimpleOposite)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
+TEST(MatrixLinearInterpolation, MakeItDouble)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, 0.7f);
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 2.f);
 
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
+    matrix::Matrix<float, 2, 1> expect = {6.f, 11.f};
+    EXPECT_EQ(matrix, expect);
+}
 
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{3.4f, 5.8f}}));
-// }
+TEST(MatrixLinearInterpolation, MakeItLess)
+{
+    matrix::Matrix<float, 2, 1> matrix1 = {2.f, 3.f};
+    matrix::Matrix<float, 2, 1> matrix2 = {4.f, 7.f};
 
-// TEST(MatrixLinearInterpolation, MakeItDouble)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
+    matrix::Matrix<float, 2, 1> matrix = matrix::lerp(matrix1, matrix2, -1.f);
 
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, 2.f);
-
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
-
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{6.f, 11.f}}));
-// }
-
-// TEST(MatrixLinearInterpolation, MakeItLess)
-// {
-//     matrix::Matrix<float> matrix1{{2, 3}};
-//     matrix::Matrix<float> matrix2{{4, 7}};
-
-//     matrix::Matrix<float> matrix = matrix::lerp(matrix1, matrix2, -1.f);
-
-//     EXPECT_EQ(matrix1, matrix::Matrix<float>({{2, 3}}));
-//     EXPECT_EQ(matrix2, matrix::Matrix<float>({{4, 7}}));
-
-//     EXPECT_EQ(matrix, matrix::Matrix<float>({{0.f, -1.f}}));
-// }
+    matrix::Matrix<float, 2, 1> expect = {0.f, -1.f};
+    EXPECT_EQ(matrix, expect);
+}
 
 /***************************** */
 
