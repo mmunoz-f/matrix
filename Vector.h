@@ -352,7 +352,7 @@ Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& elements, const V
 }
 
 template<typename T, size_t N>
-inline Vector<T, N> lerp(const Vector<T, N>& u, const Vector<T, N>& v, const float scalar)
+inline Vector<T, N> lerp(const Vector<T, N>& u, const Vector<T, N>& v, const float scalar) // TODO
 {
     return linear_combination(Vector<Vector<T, N>, 2>({u, v}), Vector<float, 2>({1 - scalar, scalar}));
 }

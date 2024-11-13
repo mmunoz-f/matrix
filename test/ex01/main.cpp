@@ -35,8 +35,8 @@ TEST(LinearCombination, VectorSimple)
 
     auto vector = matrix::linear_combination(vectors, coefs);
 
-    matrix::Vector<int, 3> expt = {14, 24, 36};
-    EXPECT_EQ(vector, expt);
+    matrix::Vector<int, 3> expect = {14, 24, 36};
+    EXPECT_EQ(vector, expect);
 }
 
 /***************************** */

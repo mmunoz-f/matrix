@@ -48,7 +48,7 @@ public:
 
     }
 
-    Complex(const int n)
+    Complex(const T& n)
     :   real(n),
         imaginary()
     {

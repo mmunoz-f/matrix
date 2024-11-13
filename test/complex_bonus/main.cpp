@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include "../../matrix.h"
-#include "../../Complex.h"
 
 #include "../test_utils.hpp"
 
@@ -303,7 +302,7 @@ TEST(MatrixComplexArithmetics, AssignScalarDivision)
  * EX01
  */
 
-TEST(ComplexLinearCombination, VectorSimple)
+TEST(ComplexLinearCombination, Vector)
 {
     matrix::Vector<matrix::Complex<float>, 2> vector1 = {matrix::Complex<float>(1.f, 0.f), matrix::Complex<float>(1.f, 0.f)};
     matrix::Vector<matrix::Complex<float>, 2> vector2 = {matrix::Complex<float>(0.f, 1.f), matrix::Complex<float>(0.f, 1.f)};
@@ -321,7 +320,16 @@ TEST(ComplexLinearCombination, VectorSimple)
  * EX02
  */
 
+TEST(ComplexLinearInterpolation, Matrix)
+{
+    matrix::Matrix<matrix::Complex<float>, 2, 1> matrix1 = {matrix::Complex<float>(1.f, 0.f), matrix::Complex<float>(1.f, 0.f)};
+    matrix::Matrix<matrix::Complex<float>, 2, 1> matrix2 = {matrix::Complex<float>(0.f, 0.f), matrix::Complex<float>(0.f, 0.f)};
 
+    matrix::Matrix<matrix::Complex<float>, 2, 1> matrix = matrix::lerp(matrix1, matrix2, 0.7f);
+
+    matrix::Matrix<matrix::Complex<float>, 2, 1> expect = {matrix::Complex<float>(0.7f, 0.f), matrix::Complex<float>(0.7f, 0.f)};
+    EXPECT_EQ(matrix, expect);
+}
 
 /***************************** */
 
