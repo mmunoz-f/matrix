@@ -18,7 +18,7 @@ TEST(LinearCombination, Simple)
 
 TEST(LinearCombination, SimpleNonArith)
 {
-     matrix::Vector<A, 2> values = {A(3), A(2)};
+    matrix::Vector<A, 2> values = {A(3), A(2)};
     matrix::Vector<int, 2> coefs = {4, 5};
 
     A result = matrix::linear_combination(values, coefs);

@@ -48,6 +48,13 @@ public:
 
     }
 
+    Complex(const int n)
+    :   real(n),
+        imaginary()
+    {
+        
+    }
+
 /***
  * Assing Operations
  */
