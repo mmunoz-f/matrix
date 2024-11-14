@@ -578,16 +578,16 @@ inline Matrix<T, M, N> lerp(const Matrix<T, M, N>& a, const Matrix<T, M, N>& b, 
     return result;
 }
 
-const Matrix<float, 4, 4> projection(float fov, float ratio, float near, float far)
+const Matrix<double, 4, 4> projection(double fov, double ratio, double near, double far)
 {
     // Convert degrees to radians
-    fov = fov * ::M_PI / 180.f;
+    fov = fov * M_PI / 180.f;
 
-    const Matrix<float, 4, 4> projection = {
-        1.f / (ratio * tan(fov / 2)),                0.f,                        0.f,                            0.f,
-                                 0.f, 1.f / tan(fov / 2),                        0.f,                            0.f,
-                                 0.f,                0.f, -(far + near)/(far - near), -2 * (far * near)/(far - near),
-                                 0.f,                0.f,                       -1.f,                            0.f
+    const Matrix<double, 4, 4> projection = {
+        1. / (ratio * tan(fov / 2)),                0.,                        0.,                            0.,
+                                 0., 1. / tan(fov / 2),                        0.,                            0.,
+                                 0.,                0., -(far + near)/(far - near), -2 * (far * near)/(far - near),
+                                 0.,                0.,                       -1.,                            0.
     };
 
     return projection;
