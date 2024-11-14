@@ -584,10 +584,10 @@ const Matrix<double, 4, 4> projection(double fov, double ratio, double near, dou
     fov = fov * M_PI / 180.f;
 
     const Matrix<double, 4, 4> projection = {
-        1. / (ratio * tan(fov / 2)),                0.,                        0.,                            0.,
-                                 0., 1. / tan(fov / 2),                        0.,                            0.,
+        1. / (ratio * tan(fov / 2)),                0.,                         0.,                             0.,
+                                 0., 1. / tan(fov / 2),                         0.,                             0.,
                                  0.,                0., -(far + near)/(far - near), -2 * (far * near)/(far - near),
-                                 0.,                0.,                       -1.,                            0.
+                                 0.,                0.,                        -1.,                             0.
     };
 
     return projection;

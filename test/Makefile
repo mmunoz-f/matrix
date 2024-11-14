@@ -13,7 +13,7 @@ $(Google_Test): $(REPO_DIR)
 	cd googletest ;\
 	mkdir build ;\
 	cd build ;\
-	cmake .. ;\
+	cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ .. ;\
 	make
 
 $(NAME): $(Google_Test)
