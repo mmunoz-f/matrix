@@ -1,7 +1,7 @@
 NAME	= ex10.out
 
 CXX			= g++
-CXXFLAGS	= -Wall -Werror -Wextra -std=c++20 -g -fsanitize=address -thread -I../googletest/googletest/include
+CXXFLAGS	= -Wall -Werror -Wextra -std=c++20 -g -fsanitize=address -pthread -I../googletest/googletest/include
 
 SRCS	= main.cpp
 OBJS	= $(SRCS:.cpp=.o)
