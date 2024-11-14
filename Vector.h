@@ -351,10 +351,10 @@ Vector<T, N> linear_combination(const Vector<Vector<T, N>, M>& elements, const V
     return result;
 }
 
-template<typename T, size_t N>
-inline Vector<T, N> lerp(const Vector<T, N>& u, const Vector<T, N>& v, const float scalar) // TODO
+template<typename object, typename T>
+inline object lerp(const object& u, const object& v, const T scalar)
 {
-    return linear_combination(Vector<Vector<T, N>, 2>({u, v}), Vector<float, 2>({1 - scalar, scalar}));
+    return linear_combination(Vector<object, 2>({u, v}), Vector<T, 2>({1 - scalar, scalar}));
 }
 
 template<typename T, size_t N>
