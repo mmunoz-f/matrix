@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include <utility>
 #include <array>
 #include <ostream>
@@ -574,6 +576,14 @@ inline Matrix<T, M, N> lerp(const Matrix<T, M, N>& a, const Matrix<T, M, N>& b, 
     }
 
     return result;
+}
+
+Matrix<float, 4, 4> projection(float fov, float ratio, float near, float far)
+{
+    // Convert degrees to radians
+    fov = fov * Math::PI / 180;
+
+
 }
 
 } // namespace matrix
