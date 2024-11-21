@@ -246,7 +246,7 @@ public:
 
         for (size_t i = 0; i < N; i++)
         {   
-            result += _data[i];
+            result += abs(_data[i]);
         }
 
         return result;

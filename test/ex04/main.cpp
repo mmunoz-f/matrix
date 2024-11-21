@@ -10,7 +10,7 @@ TEST(Norm1, Simple)
 
     float result = vector.norm_1();
 
-    EXPECT_EQ(result, 2);
+    EXPECT_EQ(result, 6);
 }
 
 TEST(Norm, Simple)
