@@ -335,13 +335,11 @@ public:
                     }
                 i++;
             }
+            else
+                throw std::runtime_error("inverse: matrix is singular");
+
             pivot++;
         }
-
-        if (copy != Matrix::identity())
-            throw std::runtime_error(
-                "inverse: matrix is singular"
-            );
 
         return inverse;
     }
@@ -576,21 +574,6 @@ inline Matrix<T, M, N> lerp(const Matrix<T, M, N>& a, const Matrix<T, M, N>& b, 
     }
 
     return result;
-}
-
-const Matrix<double, 4, 4> projection(double fov, double ratio, double near, double far)
-{
-    // Convert degrees to radians
-    fov = fov * M_PI / 180.f;
-
-    const Matrix<double, 4, 4> projection = {
-        1. / (ratio * tan(fov / 2)),                0.,                         0.,                             0.,
-                                 0., 1. / tan(fov / 2),                         0.,                             0.,
-                                 0.,                0., -(far + near)/(far - near), -2 * (far * near)/(far - near),
-                                 0.,                0.,                        -1.,                             0.
-    };
-
-    return projection;
 }
 
 } // namespace matrix
